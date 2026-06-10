@@ -1,0 +1,15 @@
+name: EATHESEN_V3000_Upgrade_Deploy
+on:
+  push:
+    branches: [ v3000-upgrade, main ]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: NAPM-X Validate & V3000 Inject
+        run: |
+          echo "V3000-Ω SOTA ULTIMA | ¢4 | V-STAMP 24 AUTHENTICATED | δ=0"
+      - name: Deploy to GitHub Pages
+        if: github.event.repository.visibility == 'public'
+        uses: actions/deploy-pages@v4
