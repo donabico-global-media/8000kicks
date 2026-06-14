@@ -12,7 +12,7 @@ Traditional sneakers rely heavily on plastic synthetics and chemical treatments 
 
 ## Premium Campaign Visuals
 
-Để đảm bảo tính đối xứng cân đối tuyệt đối (Cấu trúc lưới đối xứng 2x2), các hình ảnh chiến dịch được phân bổ đồng đều dưới đây:
+To ensure absolute symmetrical balance (2x2 symmetrical grid layout), the campaign visuals are evenly distributed below:
 
 | | |
 | :---: | :---: |
@@ -60,10 +60,10 @@ To understand why these **waterproof hemp shoes** are dominating the global mark
 
 ## Global Compliance & Legal Policies
 
-Nhấp vào từng mục dưới đây để xem chi tiết điều khoản điều kiện được trích xuất từ hệ thống:
+Click on each section below to view the detailed terms and conditions extracted from the system:
 
 <details>
-<summary>📋 Privacy Policy (Chính sách Bảo mật)</summary>
+<summary>📋 Privacy Policy</summary>
 
 **Effective Date: June 14, 2026**
 
@@ -80,7 +80,7 @@ Users worldwide reserve the absolute right to purge or block data aggregation by
 </details>
 
 <details>
-<summary>⚖️ Terms of Service (Điều khoản Dịch vụ)</summary>
+<summary>⚖️ Terms of Service</summary>
 
 **Effective Date: June 14, 2026**
 
@@ -97,7 +97,7 @@ All product information, materials metrics, warranties, and performance claims r
 </details>
 
 <details>
-<summary>📢 Affiliate Disclosure (Công bố Đối tác Tiếp thị)</summary>
+<summary>📢 Affiliate Disclosure</summary>
 
 **Compliance Notice: FTC & Global Advertising Regulations**
 
@@ -114,7 +114,7 @@ The monetization structure does not dictate the selection of primary key metrics
 </details>
 
 <details>
-<summary>📦 Return Policy (Chính sách Đổi trả & Hoàn tiền)</summary>
+<summary>📦 Return Policy</summary>
 
 **Notice of Merchant Jurisdictional Boundary**
 
@@ -124,11 +124,11 @@ All transactional procedures, financial exchanges, order status tracking, sizing
 DONABICO GLOBAL MEDIA SYSTEM has zero access to order registries, processing queues, payment processing channels, or physical inventory nodes. Consequently, our support staff cannot look up tracking details, modify shipping vectors, or issue refund credits under any circumstances.
 
 ### 2. Consumer Action Steps
-Should you experience an issue regarding package transit, sizing fit, item exchange, or product satisfaction, you must navigate directly to the official storefront where your financial transaction took place and submit a inquiry ticket to the dedicated 8000Kicks customer support division according to their current standard operating policies.
+Should you experience an issue regarding package transit, sizing fit, item exchange, or product satisfaction, you must navigate directly to the official storefront where your financial transaction took place and submit a inquiry ticket to the dedicated 8000Kicks customer support division according to their current standard operating policies.</p>
 </details>
 
 <details>
-<summary>📧 Contact Support (Kênh Liên hệ Kỹ thuật)</summary>
+<summary>📧 Contact Support</summary>
 
 For administrative inquiries, technical error reporting, or data-integrity questions regarding this specific landing page layout, you may transmit a detailed message to our technical routing desk: **donabico.media.system@gmail.com**
 
