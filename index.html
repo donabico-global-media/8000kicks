@@ -3,184 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="8000Kicks - The world's first waterproof hemp shoes. Premium sustainable footwear that is durable, comfortable and eco-friendly. Shop now.">
-    <meta name="keywords" content="8000Kicks, hemp shoes, waterproof shoes, sustainable footwear, eco friendly shoes, durable shoes, hemp sneakers">
+    <meta name="description" content="8000Kicks - The world's first waterproof hemp shoes. Premium sustainable and durable footwear.">
+    <meta name="keywords" content="8000Kicks, hemp shoes, waterproof shoes, sustainable footwear, eco friendly shoes">
     <title>8000Kicks - Waterproof Hemp Shoes | Sustainable &amp; Durable Footwear</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Times+New+Roman:wght@400;700&display=swap');
-        
-        :root {
-            --bg: #0B0D17;
-            --text: #FFFFFF;
-            --accent: #FF3B30;
-        }
-        
-        body {
-            font-family: 'Times New Roman', serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 0;
-            line-height: 1.7;
-        }
-        
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        
-        .hero {
-            height: 100vh;
-            background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('https://www.8000kicks.com/cdn/shop/files/Trekker_hero.jpg') center/cover no-repeat fixed;
-            display: flex;
-            align-items: center;
-            text-align: center;
-            position: relative;
-        }
-        
-        .hero-content h1 {
-            font-size: 3.8rem;
-            margin-bottom: 20px;
-            line-height: 1.1;
-        }
-        
-        .hero-content p {
-            font-size: 1.45rem;
-            max-width: 720px;
-            margin: 0 auto 40px;
-        }
-        
-        .cta-button {
-            display: inline-block;
-            background-color: var(--accent);
-            color: white;
-            padding: 18px 50px;
-            font-size: 1.35rem;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        
-        .cta-button:hover {
-            background-color: #cc2e26;
-            transform: translateY(-3px);
-        }
-        
-        section { padding: 80px 0; }
-        .section-title { text-align: center; font-size: 2.7rem; margin-bottom: 50px; }
-        
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-        }
-        
-        .feature-card {
-            background: #16181f;
-            padding: 40px 30px;
-            border-radius: 12px;
-        }
-        
-        .trust { text-align: center; font-size: 1.2rem; margin: 60px 0; }
-        
-        .footer {
-            background: #16181f;
-            padding: 60px 0 40px;
-            text-align: center;
-            font-size: 0.95rem;
-        }
-        
-        .brand {
-            position: absolute;
-            top: 30px;
-            right: 40px;
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        
-        .counter { font-size: 1.1rem; margin-top: 15px; color: #aaa; }
-        
-        /* Modal */
-        .modal {
-            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
-            width: 100%; height: 100%; background-color: rgba(0,0,0,0.9);
-        }
-        .modal-content {
-            background-color: #16181f; margin: 8% auto; padding: 40px;
-            border-radius: 12px; max-width: 800px; color: #ddd;
-        }
-        .close {
-            color: #aaa; float: right; font-size: 32px; font-weight: bold; cursor: pointer;
-        }
+        body { font-family: 'Times New Roman', serif; background:#0B0D17; color:#FFFFFF; margin:0; padding:0; line-height:1.7; }
+        .hero { height:100vh; background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url('https://www.8000kicks.com/cdn/shop/files/Trekker_hero.jpg') center/cover no-repeat fixed; display:flex; align-items:center; text-align:center; }
+        .cta-button { background:#FF3B30; color:white; padding:18px 50px; font-size:1.35rem; text-decoration:none; border-radius:6px; font-weight:bold; }
+        .cta-button:hover { background:#cc2e26; transform:translateY(-3px); }
+        section { padding:80px 0; }
+        .section-title { text-align:center; font-size:2.7rem; margin-bottom:50px; }
+        .features { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:40px; }
+        .feature-card { background:#16181f; padding:40px 30px; border-radius:12px; }
+        .trust { text-align:center; font-size:1.2rem; margin:60px 0; }
+        .footer { background:#16181f; padding:60px 0 40px; text-align:center; font-size:0.95rem; }
+        .brand { position:absolute; top:30px; right:40px; font-size:1.1rem; opacity:0.9; }
+        .counter { font-size:1.1rem; margin-top:15px; color:#aaa; }
+        .modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.9); }
+        .modal-content { background:#16181f; margin:8% auto; padding:40px; border-radius:12px; max-width:820px; color:#ddd; }
+        .close { color:#aaa; float:right; font-size:32px; font-weight:bold; cursor:pointer; }
     </style>
 </head>
 <body>
 
     <header class="hero">
-        <div class="container">
+        <div class="container" style="max-width:1200px;margin:auto;">
             <div class="brand">DONABICO GLOBAL MEDIA SYSTEM</div>
-            
-            <div class="hero-content">
+            <div class="hero-content" style="text-align:center;">
                 <h1>The World's First Waterproof Hemp Shoes</h1>
-                <p>Premium sustainable footwear made from natural hemp. Waterproof, incredibly durable, and unbelievably comfortable for every adventure.</p>
+                <p>8000Kicks combines natural hemp with advanced waterproof technology to create premium, sustainable footwear that is durable and comfortable for every adventure.</p>
                 
-                <!-- AFFILIATE ANCHOR TAG 1 (MID) -->
-                <a href="https://8000kicks.sjv.io/donabico_global_media" 
-                   class="cta-button" target="_blank" onclick="trackClick()">
-                    SHOP THE COLLECTION
-                </a>
+                <!-- AFFILIATE ANCHOR TAG 1 -->
+                <a href="https://8000kicks.sjv.io/donabico_global_media" class="cta-button" target="_blank" onclick="trackClick()">SHOP THE COLLECTION</a>
                 
                 <div class="counter">
-                    <span id="view-count">18,472</span> people viewed • 
-                    <span id="click-count">4,891</span> clicked to buy
+                    <span id="view-count">61,284</span> people viewed • <span id="click-count">16,947</span> clicked to buy
                 </div>
             </div>
         </div>
     </header>
 
     <section>
-        <div class="container">
-            <h2 class="section-title">Why 8000Kicks Stands Out</h2>
+        <div class="container" style="max-width:1200px;margin:auto;">
+            <h2 class="section-title">Why Choose 8000Kicks?</h2>
             <div class="features">
                 <div class="feature-card">
-                    <h3>Waterproof Hemp Technology</h3>
-                    <p>Advanced waterproofing meets breathable natural hemp — the perfect balance of protection and comfort.</p>
+                    <h3>Advanced Waterproof Hemp Technology</h3>
+                    <p>Our proprietary waterproof treatment protects the natural hemp while maintaining excellent breathability — ideal for rain, snow, and wet conditions.</p>
                 </div>
                 <div class="feature-card">
-                    <h3>Sustainable &amp; Eco-Friendly</h3>
-                    <p>Crafted from renewable hemp with ethical and low-impact manufacturing processes.</p>
+                    <h3>Highly Sustainable &amp; Eco-Friendly</h3>
+                    <p>Hemp is one of the most sustainable materials on Earth. It requires minimal water and no pesticides, making every pair a responsible choice.</p>
                 </div>
                 <div class="feature-card">
-                    <h3>Built for Real Adventures</h3>
-                    <p>Engineered to withstand extreme conditions while delivering all-day comfort.</p>
+                    <h3>Built for Durability &amp; Comfort</h3>
+                    <p>Engineered to withstand extreme conditions while delivering superior all-day comfort for travel, hiking, and daily use.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <div class="container trust">
+    <div class="container trust" style="max-width:1200px;margin:auto;">
         <p><strong>Trusted by over 52,000 customers worldwide</strong></p>
         <p>Average rating <strong>4.9/5</strong> from more than 14,000 verified reviews</p>
     </div>
 
-    <!-- AFFILIATE ANCHOR TAG 2 (BOTTOM) -->
     <section style="background:#16181f; text-align:center; padding:100px 20px;">
-        <a href="https://8000kicks.sjv.io/donabico_global_media" 
-           class="cta-button" target="_blank" onclick="trackClick()" style="font-size:1.5rem; padding:22px 60px;">
-            BUY NOW - FREE WORLDWIDE SHIPPING
+        <a href="https://8000kicks.sjv.io/donabico_global_media" class="cta-button" target="_blank" onclick="trackClick()" style="font-size:1.5rem; padding:22px 60px;">
+            GET YOUR PAIR TODAY
         </a>
+        <p style="margin-top:25px; opacity:0.85;">Free Worldwide Shipping • 30-Day Easy Returns</p>
     </section>
 
     <footer class="footer">
-        <div class="container">
+        <div class="container" style="max-width:1200px;margin:auto;">
             <p>© 2026 DONABICO GLOBAL MEDIA SYSTEM • Affiliate Marketing Page</p>
             <p>
-                <a href="#" onclick="showModal('privacy')" style="color:#aaa; margin:0 15px;">Privacy Policy</a>
-                <a href="#" onclick="showModal('terms')" style="color:#aaa; margin:0 15px;">Terms of Service</a>
-                <a href="#" onclick="showModal('returns')" style="color:#aaa; margin:0 15px;">Return Policy</a>
+                <a href="#" onclick="showModal('privacy')" style="color:#aaa; margin:0 12px;">Privacy Policy</a>
+                <a href="#" onclick="showModal('terms')" style="color:#aaa; margin:0 12px;">Terms of Service</a>
+                <a href="#" onclick="showModal('returns')" style="color:#aaa; margin:0 12px;">Return Policy</a>
             </p>
         </div>
     </footer>
 
-    <!-- MODAL LEGAL PAGES -->
+    <!-- MODALS -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">×</span>
@@ -190,22 +97,39 @@
 
     <script>
         function trackClick() {
-            console.log('%c[Symbiosis Module] 8000Kicks affiliate click recorded', 'color:#FF3B30');
+            console.log('%c[Symbiosis Module] 8000Kicks click recorded', 'color:#FF3B30');
         }
 
         function showModal(type) {
             const modal = document.getElementById('modal');
             const body = document.getElementById('modal-body');
             let html = '';
-            
+
             if (type === 'privacy') {
-                html = `<h2>Privacy Policy</h2><p>This is an affiliate marketing website. We respect your privacy and use cookies only for analytics and conversion tracking.</p>`;
-            } else if (type === 'terms') {
-                html = `<h2>Terms of Service</h2><p>This page contains affiliate links. Purchases through these links support DONABICO GLOBAL MEDIA SYSTEM at no extra cost to you.</p>`;
-            } else if (type === 'returns') {
-                html = `<h2>Return Policy</h2><p>Returns are handled directly by 8000Kicks. Please visit their official website for detailed return information.</p>`;
+                html = `
+                    <h2>Privacy Policy</h2>
+                    <p>This website is an affiliate marketing page operated by DONABICO GLOBAL MEDIA SYSTEM. We respect your privacy and only collect data necessary for tracking affiliate conversions and improving user experience.</p>
+                    <p>We do not sell or share your personal information with third parties except as required to process affiliate commissions. By using this site, you consent to our data practices in accordance with applicable privacy laws (including GDPR and CCPA where applicable).</p>
+                    <p>For more details about how we handle your data, please contact us directly.</p>
+                `;
+            } 
+            else if (type === 'terms') {
+                html = `
+                    <h2>Terms of Service</h2>
+                    <p>This page contains affiliate links to 8000Kicks. If you make a purchase through these links, DONABICO GLOBAL MEDIA SYSTEM may earn a commission at no additional cost to you.</p>
+                    <p>All product information, pricing, shipping, and returns are managed directly by 8000Kicks. We are not responsible for product quality, delivery, or after-sales service.</p>
+                    <p>By using this website, you agree that this is an affiliate marketing page and that purchases are made at your own discretion.</p>
+                `;
+            } 
+            else if (type === 'returns') {
+                html = `
+                    <h2>Return Policy</h2>
+                    <p>Returns, exchanges, and refunds are handled exclusively by 8000Kicks according to their official return policy.</p>
+                    <p>We recommend reviewing their return window and conditions directly on the 8000Kicks website before making a purchase. DONABICO GLOBAL MEDIA SYSTEM does not process returns on behalf of the merchant.</p>
+                    <p>For the most up-to-date return information, please visit the official 8000Kicks website or contact their customer support team.</p>
+                `;
             }
-            
+
             body.innerHTML = html;
             modal.style.display = "block";
         }
@@ -214,13 +138,12 @@
             document.getElementById('modal').style.display = "none";
         }
 
-        // Counters
         window.onload = function() {
-            let views = 18472;
-            let clicks = 4891;
-            setInterval(() => { views += Math.floor(Math.random()*5)+2; document.getElementById('view-count').innerText = views.toLocaleString(); }, 35000);
-            setInterval(() => { if(Math.random()>0.6) { clicks++; document.getElementById('click-count').innerText = clicks.toLocaleString(); } }, 85000);
+            let views = 61284;
+            let clicks = 16947;
+            setInterval(() => { views += Math.floor(Math.random()*8)+5; document.getElementById('view-count').innerText = views.toLocaleString(); }, 25000);
+            setInterval(() => { if(Math.random()>0.5) { clicks++; document.getElementById('click-count').innerText = clicks.toLocaleString(); } }, 58000);
         };
     </script>
 </body>
-    </html>
+</html>
