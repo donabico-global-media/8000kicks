@@ -34,11 +34,11 @@ jobs:
         run: |
           echo "[📡 CONNECTING] Đang giải mã Token định danh mạng lưới..."
           
-          if [ -f "Modules/Connect-Drone-Bridge.py" ]; then
+          if [ -f "Bridge/Connect-Drone-Bridge.py" ]; then
             echo "[✅ FOUND] Phát hiện tệp cầu nối. Kích hoạt tiến trình truyền tải..."
             python "Modules/Connect-Drone-Bridge.py"
           else
-            echo "[🚨 CRITICAL ERROR] Không tìm thấy tệp cấu trúc tại: Modules/Connect-Drone-Bridge.py"
+            echo "[🚨 CRITICAL ERROR] Không tìm thấy tệp cấu trúc tại: Bridge/Connect-Drone-Bridge.py"
             exit 1
           fi
 
