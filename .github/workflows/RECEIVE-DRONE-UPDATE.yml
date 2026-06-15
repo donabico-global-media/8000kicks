@@ -10,16 +10,9 @@ permissions:
 jobs:
   sync-and-rebuild:
     runs-on: ubuntu-latest
-    concurrency:
-      group: drone-mesh-8000kicks
-      cancel-in-progress: true     # Chỉ bản mới nhất chạy, cancel bản cũ ngay
-
     steps:
       - name: "Checkout Drone Substrate"
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/checkout@v4 
 
       - name: "Catch Dynamic Payload & Write File"
         env:
@@ -31,52 +24,33 @@ jobs:
 
       - name: "Infinite Module Connection & Execution"
         run: |
-          echo "Đang quét các Module tại 8000kicks/Modules/..."
+          echo "📡 Đang quét các Module tại 8000kicks/Modules/..."
           for module in Modules/*.py; do
             if [ -f "$module" ]; then
-              echo "Kích nổ Module: $module"
-              python3 "$module" || echo "Module $module gặp sự cố, hệ thống vẫn tiếp tục..."
+              echo "🚀 Kích nổ Module: $module"
+              python3 "$module" || echo "⚠️ Module $module gặp sự cố, hệ thống vẫn tiếp tục..."
             fi
           done
 
-      - name: "Lock and Push Update State (Force-Mesh Mode) — FINAL DỨT ĐIỂM"
+      - name: "Lock and Push Update State (Rebase-Sync Mode)"
         run: |
+          # 1. Cấu hình định danh
           git config --global user.name "AETH-V5000-MASTER-CORE"
           git config --global user.email "sre-admin@donabico.global"
-
-          # Retry toàn bộ quy trình git tối đa 6 lần
-          for i in {1..6}; do
-            echo "=== Lần thử push $i/6 ==="
-
-            git fetch origin main
-            git checkout -B main origin/main || git checkout -B main
-
-            # Ghi đè index.html từ payload (đảm bảo nội dung mới nhất)
-            cat << 'EOF' > index.html
-            ${{ github.event.client_payload.html_content }}
-            EOF
-
-            git add index.html
-
-            if git diff --cached --quiet; then
-              echo "Không có thay đổi mới. Bỏ qua commit & push."
-              exit 0
-            fi
-
-            git commit -m "sys(drone-mesh): central module synchronization [skip ci]" || true
-
-            # Force push
-            if git push origin main --force; then
-              echo "✅ PUSH THÀNH CÔNG ở lần thử $i"
-              exit 0
-            else
-              echo "⚠️ Push thất bại lần $i, chờ 3 giây rồi thử lại..."
-              sleep 3
-            fi
-          done
-
-          echo "❌ Đã thử 6 lần vẫn thất bại. Dừng workflow."
-          exit 1
+          
+          # 2. Cấu hình xác thực token
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          
+          # 3. Đồng bộ hóa lịch sử bằng Rebase để loại bỏ xung đột
+          git config pull.rebase true
+          git pull origin main --rebase
+          
+          # 4. Gom dữ liệu và Commit
+          git add index.html
+          git commit -m "sys(drone-mesh): central module synchronization [skip ci]" || echo "Không có thay đổi để commit"
+          
+          # 5. Đẩy code lên server
+          git push origin main
 
       - name: "Signal Back to Control Center"
         if: success()
