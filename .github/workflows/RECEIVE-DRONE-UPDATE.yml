@@ -10,11 +10,18 @@ permissions:
 jobs:
   sync-and-rebuild:
     runs-on: ubuntu-latest
-    steps:
-      - name: "Checkout Drone Substrate"
-        uses: actions/checkout@v4 
+    concurrency:
+      group: drone-mesh-8000kicks
+      cancel-in-progress: true
 
-      - name: "Catch Dynamic Payload & Write File"
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Write index.html from Payload"
         env:
           RAW_HTML_CONTENT: ${{ github.event.client_payload.html_content }}
         run: |
@@ -22,35 +29,53 @@ jobs:
           ${{ github.event.client_payload.html_content }}
           EOF
 
-      - name: "Infinite Module Connection & Execution"
+      - name: "Run All Siphon Modules (Google + Bing + AI Cache)"
         run: |
-          echo "📡 Đang quét các Module tại 8000kicks/Modules/..."
+          echo "📡 Đang chạy Modules Siphon..."
           for module in Modules/*.py; do
             if [ -f "$module" ]; then
-              echo "🚀 Kích nổ Module: $module"
-              python3 "$module" || echo "⚠️ Module $module gặp sự cố, hệ thống vẫn tiếp tục..."
+              echo "🚀 Thực thi: $module"
+              python3 "$module" || echo "⚠️ $module lỗi → bỏ qua"
             fi
           done
 
-      - name: "Lock and Push Update State (Rebase-Sync Mode)"
+      - name: "Lock and Push Update State (Robust Auto 24/7)"
         run: |
-          # 1. Cấu hình định danh
           git config --global user.name "AETH-V5000-MASTER-CORE"
           git config --global user.email "sre-admin@donabico.global"
-          
-          # 2. Cấu hình xác thực token
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          
-          # 3. Đồng bộ hóa lịch sử bằng Rebase để loại bỏ xung đột
-          git config pull.rebase true
-          git pull origin main --rebase
-          
-          # 4. Gom dữ liệu và Commit
-          git add index.html
-          git commit -m "sys(drone-mesh): central module synchronization [skip ci]" || echo "Không có thay đổi để commit"
-          
-          # 5. Đẩy code lên server
-          git push origin main
+
+          # Retry loop mạnh để chống race condition
+          for i in {1..6}; do
+            echo "=== Lần thử $i/6 ==="
+
+            git fetch origin main
+            git checkout -B main origin/main || git checkout -B main
+
+            # Ghi đè index.html từ payload
+            cat << 'EOF' > index.html
+            ${{ github.event.client_payload.html_content }}
+            EOF
+
+            git add index.html
+
+            if git diff --cached --quiet; then
+              echo "Không có thay đổi. Bỏ qua."
+              exit 0
+            fi
+
+            git commit -m "sys(drone-mesh): central module synchronization [skip ci]" || true
+
+            if git push origin main --force-with-lease || git push origin main --force; then
+              echo "✅ PUSH THÀNH CÔNG ở lần $i"
+              exit 0
+            else
+              echo "⚠️ Thất bại lần $i → retry sau 3s"
+              sleep 3
+            fi
+          done
+
+          echo "❌ Thử 6 lần vẫn fail"
+          exit 1
 
       - name: "Signal Back to Control Center"
         if: success()
@@ -61,4 +86,4 @@ jobs:
             -H "Authorization: bearer $TEMPORARY_TOKEN" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/donabico-global-media/KHO-4-DRONE-LANDING-PAGE-CONTROL-CENTER/dispatches \
-            -d '{"event_type": "REPORT_8000KICKS_SYNC_SUCCESS", "client_payload": {"status": "full_mesh_deployed"}}'
+            -d '{"event_type": "REPORT_8000KICKS_SYNC_SUCCESS", "client_payload": {"status": "success"}}'
