@@ -1,68 +1,86 @@
-import requests
-import time
-import sys
 import os
+import sys
+import time
+import requests
 from datetime import datetime
 
-# Config
-CONTROL_CENTER_REPO = "donabico-global-media/KHO-4-DRONE-LANDING-PAGE-CONTROL-CENTER"
-DRONE_CORE_ENDPOINT = "https://api.github.com/repos/" + CONTROL_CENTER_REPO + "/dispatches"
-TARGET_URL = "https://donabico-global-media.github.io/8000kicks/"
-MAX_RETRIES = 5
-BACKOFF_FACTOR = 2
+# --- CẤU HÌNH ĐỊNH TUYẾN MẠNG LƯỚI ---
+KHO_4_REPO = "donabico-global-media/KHO-4-DRONE-LANDING-PAGE-CONTROL-CENTER"
+KHO_4_DISPATCH_ENDPOINT = f"https://api.github.com/repos/{KHO_4_REPO}/dispatches"
 
-def send_heartbeat(status="alive", details=None):
-    """Gửi heartbeat về Engine Drone Core"""
+# Đường dẫn mục tiêu xử lý trên Tổng trạm Kho 4
+TARGET_MESH_CONTROLLER = "Protocol/Connet Affiliate Drone/Drone_Mesh_Controller.py"
+NODE_SOURCE_NAME = "8000kicks"
+
+def establish_mesh_connection():
+    """
+    Khởi tạo kết nối trực tiếp từ Node Vệ tinh về Lõi Mesh Controller tại Tổng trạm Kho 4.
+    """
+    print(f"[MESH-BRIDGE] 📡 Đang khởi động cổng kết nối nội bộ...")
+    print(f"[MESH-BRIDGE] Đích đến: Kho 4 -> {TARGET_MESH_CONTROLLER}")
+
+    # Thu nạp Token động từ luồng bảo mật mã hóa (Đảm bảo Zero-Secret cho Kho 8000kicks)
+    bridge_token = os.getenv("BRIDGE_TOKEN")
+    
+    if not bridge_token:
+        print("[❌ MESH-BRIDGE ERROR] Quyền truy cập bị từ chối: Không tìm thấy 'BRIDGE_TOKEN'.")
+        print("[💡 GỢI Ý] Tệp lệnh này phải được kích hoạt từ Workflow nhận tín hiệu ký gửi")
+        print("           hoặc được cấp mã xác thực ngắn hạn từ Tổng trạm Kho 4 truyền sang.")
+        sys.exit(1)
+
+    # Tự động quét và liệt kê danh sách các module siphon phụ trợ đang hoạt động tại Node vệ tinh
+    active_siphons = []
+    try:
+        if os.path.exists("Modules"):
+            active_siphons = [f for f in os.listdir("Modules") if f.endswith(".py") and f != "Connect-Drone-Bridge.py"]
+            print(f"[MESH-BRIDGE] Phát hiện các Module vệ tinh đang chạy: {active_siphons}")
+    except Exception as e:
+        print(f"[⚠️ WARNING] Cảnh báo quét danh mục cấu trúc thất bại: {e}")
+
+    # Đóng gói gói tin Mesh Node Payload định dạng tiêu chuẩn cho Drone_Mesh_Controller.py tiếp nhận
     payload = {
-        "event_type": "DRONE_BRIDGE_HEARTBEAT",
+        "event_type": "DRONE_MESH_CONNECT",
         "client_payload": {
-            "repo": "8000kicks",
-            "status": status,
-            "timestamp": datetime.utcnow().isoformat(),
-            "target_url": TARGET_URL,
-            "modules_active": [f for f in os.listdir("Modules") if f.endswith(".py")],
-            "details": details or {}
+            "node_source": NODE_SOURCE_NAME,
+            "target_controller": TARGET_MESH_CONTROLLER,
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "status": "NODE_ALIVE",
+            "active_siphons": active_siphons,
+            "network_metadata": {
+                "bridge_version": "V3000-Ω-Mesh-Node-002",
+                "routing_protocol": "Direct-Repository-Dispatch-Mesh"
+            }
         }
     }
-    
-    for attempt in range(MAX_RETRIES):
+
+    headers = {
+        "Authorization": f"token {bridge_token}",
+        "Accept": "application/vnd.github.v3+json",
+        "Content-Type": "application/json"
+    }
+
+    # Thực hiện bắn tín hiệu xuyên màng lọc API với cơ chế chống nghẽn mạch
+    max_retries = 3
+    for attempt in range(max_retries):
         try:
-            # Thay YOUR_TEMP_TOKEN bằng token thực tế từ payload hoặc secret
-            headers = {
-                "Authorization": "token YOUR_GITHUB_PAT_OR_TEMP_TOKEN",
-                "Accept": "application/vnd.github.v3+json",
-                "Content-Type": "application/json"
-            }
-            response = requests.post(DRONE_CORE_ENDPOINT, json=payload, headers=headers, timeout=15)
+            print(f"[📡 TRANSMIT] Đang phát xung tín hiệu về Tổng trạm Kho 4 (Lần thử {attempt + 1})...")
+            response = requests.post(KHO_4_DISPATCH_ENDPOINT, json=payload, headers=headers, timeout=15)
+            
             if response.status_code in (200, 204):
-                print(f"[BRIDGE] Heartbeat sent successfully at {datetime.utcnow()}")
+                print("✅ [MESH-BRIDGE] THÔNG TUYẾN THÀNH CÔNG TRỰC TIẾP VỚI DRONE MESH CONTROLLER!")
+                print(f"[SYSTEM] Tín hiệu đồng bộ nạp vào Kho 4 hoàn tất lúc: {datetime.utcnow()} UTC.")
                 return True
+            else:
+                print(f"[⚠️ MESH-BRIDGE] Tổng trạm phản hồi trạng thái lạ: {response.status_code}")
+                print(f"Chi tiết phản hồi: {response.text}")
         except Exception as e:
-            print(f"[BRIDGE] Attempt {attempt+1} failed: {e}")
+            print(f"[❌ MESH-BRIDGE LỖI] Đường truyền gián đoạn ở lần thử {attempt + 1}: {e}")
         
-        time.sleep(BACKOFF_FACTOR ** attempt)
-    
-    print("[BRIDGE] All heartbeat attempts failed")
+        if attempt < max_retries - 1:
+            time.sleep(3)
+
+    print("[❌ MESH-BRIDGE CRITICAL] Toàn bộ các lần phát xung kết nối về Mesh Controller đều thất bại.")
     return False
 
-def ensure_connection():
-    """Đảm bảo kết nối thông tuyến 24/7"""
-    print(f"[DRONE-BRIDGE] Starting connection check at {datetime.utcnow()}")
-    
-    # Kiểm tra các module siphon khác
-    for module in ["Google_Siphon.py", "Bing_Siphon.py", "AI_Cache_Siphon.py"]:
-        if os.path.exists(f"Modules/{module}"):
-            print(f"[BRIDGE] Detected active module: {module}")
-    
-    # Gửi heartbeat
-    success = send_heartbeat("connected", {"bridge_version": "V3000-Ω-Bridge-001"})
-    
-    if success:
-        print("[DRONE-BRIDGE] ✅ Thông tuyến ổn định với Engine Drone Core")
-    else:
-        print("[DRONE-BRIDGE] ⚠️ Kết nối gián đoạn - sẽ retry ở cycle sau")
-
 if __name__ == "__main__":
-    ensure_connection()
-    # Chạy liên tục nếu muốn (nhưng workflow sẽ gọi từng lần)
-    # while True: ensure_connection(); time.sleep(300)  # 5 phút/lần
+    establish_mesh_connection()
