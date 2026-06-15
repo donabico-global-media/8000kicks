@@ -14,7 +14,6 @@ jobs:
       - name: "Checkout Drone Substrate"
         uses: actions/checkout@v4 
 
-      # VÁ LỖI NỀN TẢNG: Ghi đè cấu trúc landing page
       - name: "Catch Dynamic Payload & Write File"
         env:
           RAW_HTML_CONTENT: ${{ github.event.client_payload.html_content }}
@@ -23,28 +22,26 @@ jobs:
           ${{ github.event.client_payload.html_content }}
           EOF
 
-      # CẤU TRÚC KẾT NỐI VÔ HẠN: Quét tự động toàn bộ thư mục Modules
       - name: "Infinite Module Connection & Execution"
         run: |
-          echo "📡 Đang quét toàn bộ các nút lệnh (Modules) tại 8000kicks/Modules/..."
-          
-          # Lặp qua tất cả file có đuôi .py trong thư mục Modules
+          echo "📡 Đang quét các Module tại 8000kicks/Modules/..."
           for module in Modules/*.py; do
             if [ -f "$module" ]; then
               echo "🚀 Kích nổ Module: $module"
-              python3 "$module" || echo "⚠️ Module $module gặp sự cố nhưng hệ thống vẫn tiếp tục..."
+              python3 "$module" || echo "⚠️ Module $module gặp sự cố, hệ thống vẫn tiếp tục..."
             fi
           done
-          
-          echo "✅ Tất cả các module trong thư mục đã được kết nối và thực thi."
 
       - name: "Lock and Push Update State"
         run: |
           git config --global user.name "AETH-V5000-MASTER-CORE"
           git config --global user.email "sre-admin@donabico.global"
           
+          # Đảm bảo đồng bộ hóa với remote để tránh lỗi rejected
+          git pull origin main --rebase
+          
           git add index.html
-          git diff-index --quiet HEAD || git commit -m "sys(drone-mesh): nodal-sync modules integration [skip ci]"
+          git diff-index --quiet HEAD || git commit -m "sys(drone-mesh): central module synchronization [skip ci]"
           git push origin main
 
       - name: "Signal Back to Control Center"
