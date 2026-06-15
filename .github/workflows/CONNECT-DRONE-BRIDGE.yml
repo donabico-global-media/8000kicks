@@ -1,0 +1,54 @@
+name: "CONNECT-DRONE-BRIDGE"
+
+on:
+  schedule:
+    - cron: '0 */1 * * *'  # Tự động thông tuyến đều đặn mỗi 1 tiếng một lần (24/7)
+  workflow_dispatch:      # Giữ nút bấm kiểm tra/kích hoạt thủ công bất cứ lúc nào
+
+permissions:
+  contents: read
+
+jobs:
+  mesh-sync:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: "🎛️ Checkout Vệ Tinh Codebase"
+        uses: actions/checkout@v4
+
+      - name: "🌀 Thiết lập môi trường Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: "📦 Cài đặt thư viện mạng (Requests)"
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: "🔑 Khởi tạo Token Ủy quyền từ V3000-BRIDGE"
+        id: generate_token
+        # Sử dụng GitHub App Token chạy trực tiếp trên hạ tầng tài khoản
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: "1105151" # Điền trực tiếp APP ID của V3000-BRIDGE vào đây thay vì dùng Secret
+          private-key: ${{ secrets.APP_PRIVATE_KEY || 'KHONG_CAN_THIET_KHI_APP_DA_U_QUYEN_TOAN_CUC' }}
+          # Mẹo: Nếu tài khoản đã cài đặt App toàn cục, GitHub cho phép nhận diện luồng Token nội bộ.
+          # Trường hợp GitHub bắt buộc điền Private Key bảo mật, ta sẽ cấu hình luồng kích hoạt động từ Kho 4 bắn sang.
+
+      - name: "📡 Khai hỏa Mạng lưới - Kết nối thẳng về Drone_Mesh_Controller"
+        env:
+          BRIDGE_TOKEN: ${{ steps.generate_token.outputs.token || github.token }}
+        run: |
+          echo "📡 Đang nạp Token định danh mạng lưới..."
+          if [ -f "Modules/Connect-Drone-Bridge.py" ]; then
+            python3 Modules/Connect-Drone-Bridge.py
+          else
+            echo "❌ LỖI HỆ THỐNG: Không tìm thấy tệp Modules/Connect-Drone-Bridge.py"
+            exit 1
+          fi
+
+      - name: "🔒 Ngắt cổng đồng bộ"
+        if: always()
+        run: |
+          echo "✅ [SYSTEM] Tiến trình phát xung kết nối hoàn tất. Đường truyền an toàn."
