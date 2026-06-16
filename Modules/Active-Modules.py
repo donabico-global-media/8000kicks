@@ -1,79 +1,41 @@
 #!/usr/bin/env python3
-"""
-Active-Modules.py
-EATHESEN V3000-Ω | Active Modules Orchestrator (Infinite Scalability Update)
-"""
+# -*- coding: utf-8 -*-
+"""Active-Modules.py (Core Async Orchestrator)"""
 
-import os
+import asyncio
 import sys
-import time
-import subprocess
-from datetime import datetime, timezone
-from pathlib import Path
+import argparse
 
-MODULES_DIR = Path(__file__).parent
-EXCLUDE_FILES = {"Active-Modules.py", "__init__.py"}
-SLEEP_SECONDS = 30 * 60  # 30 phút
-
-# Tự động bắt tọa độ từ Workflow, nếu chạy tay thì lấy tọa độ dự phòng
-TARGET_URL = os.getenv("TARGET_AFFILIATE_URL", "https://donabico-global-media.github.io/8000kicks")
-
-def get_all_modules() -> list[Path]:
-    modules = []
-    for file in MODULES_DIR.glob("*.py"):
-        if file.name not in EXCLUDE_FILES:
-            modules.append(file)
-    return sorted(modules)
-
-def run_module(module_path: Path) -> dict:
-    result = {
-        "module": module_path.name,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "status": "FAILED",
-        "returncode": None,
-        "error": None,
-    }
-    try:
-        print(f"\n[ACTIVE] Đang kích hoạt: {module_path.name}")
-        # Truyền cờ --url chứa tọa độ xuống thẳng Module con
-        process = subprocess.run(
-            [sys.executable, str(module_path), "--url", TARGET_URL],
-            capture_output=True,
-            text=True,
-            timeout=300,
-        )
-        result["returncode"] = process.returncode
-        result["status"] = "SUCCESS" if process.returncode == 0 else "FAILED"
-        
-        if process.stdout:
-            print(process.stdout.strip())
-        if process.stderr:
-            print(f"[STDERR] {process.stderr.strip()}")
-            
-    except subprocess.TimeoutExpired:
-        result["error"] = "Timeout sau 5 phút"
-    except Exception as e:
-        result["error"] = str(e)
+async def run_module(script_name, target_url):
+    print(f"[ACTIVE] Đang kích hoạt: {script_name}")
+    proc = await asyncio.create_subprocess_exec(
+        sys.executable, script_name, "--url", target_url,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE
+    )
+    stdout, stderr = await proc.communicate()
     
-    print(f"[RESULT] {module_path.name} → {result['status']}")
-    return result
+    if proc.returncode == 0:
+        print(f"[RESULT] {script_name} → SUCCESS")
+        if stdout:
+            print(stdout.decode('utf-8', errors='ignore').strip())
+    else:
+        print(f"[RESULT] {script_name} → FAILED")
+        if stderr:
+            print(stderr.decode('utf-8', errors='ignore').strip())
 
-def main():
-    print("=" * 70)
-    print(f"[EATHESEN V3000-Ω] ACTIVE-MODULES ORCHESTRATOR STARTED")
-    print(f"[TARGET URL] {TARGET_URL}")
-    print(f"[TIME] {datetime.now(timezone.utc).isoformat()}")
-    print("=" * 70)
+async def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--url", type=str, required=True)
+    args = parser.parse_args()
 
-    # Chạy 1 vòng duy nhất trong GitHub Actions, vòng lặp vô hạn do cron job của file YAML lo liệu
-    modules = get_all_modules()
-    print(f"\n[SCAN] Phát hiện {len(modules)} module(s) tại {MODULES_DIR}")
-
-    for module in modules:
-        run_module(module)
-        time.sleep(3)
-
-    print(f"\n[COMPLETE] Đã kích hoạt xong toàn bộ module.")
+    # Kích hoạt đồng thời cả 4 Siphons phi chặn luồng
+    await asyncio.gather(
+        run_module("AI-Cache-Siphon.py", args.url),
+        run_module("Bing-Siphon.py", args.url),
+        run_module("Google-Siphon.py", args.url),
+        run_module("Traffic-Siphon.py", args.url)
+    )
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
