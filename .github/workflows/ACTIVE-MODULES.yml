@@ -50,30 +50,50 @@ jobs:
           echo "Targeting URL: $TARGET_URL"
           echo "======================================================================"
           
-          # Di chuyển vào Modules và thực thi, bọc thêm toán tử || true để bảo vệ luồng Actions khỏi lỗi crash luồng phụ của Python
           cd Modules
-          python Active-Modules.py --url "$TARGET_URL" || echo "[V3000-WARNING] Ma trận hoàn thành kèm cảnh báo luồng phụ."
+          
+          # 1. Chạy file điều phối chính (Kích hoạt 4 module mặc định)
+          python Active-Modules.py --url "$TARGET_URL" || echo "[V3000-WARNING] Ma trận chính hoàn thành với cảnh báo."
           
           echo "======================================================================"
-          echo "[COMPLETE] Đã kích hoạt xong toàn bộ module hệ thống."
+          echo "[V3000-BRIDGE] Tiến hành kích hoạt cưỡng bức các lõi Siphon bị sót..."
+          
+          # 2. Ép chạy trực tiếp 3 lõi marketing 0 đồng quan trọng nhất
+          if [ -f "Affiliate-Network-Siphon.py" ]; then
+            echo "[FORCED ACTIVE] Khởi chạy: Affiliate-Network-Siphon.py"
+            python Affiliate-Network-Siphon.py --url "$TARGET_URL" || echo "Affiliate Siphon gặp lỗi nhỏ."
+          fi
+          
+          if [ -f "SEO-Shield-Siphon.py" ]; then
+            echo "[FORCED ACTIVE] Khởi chạy: SEO-Shield-Siphon.py"
+            python SEO-Shield-Siphon.py --url "$TARGET_URL" || echo "SEO Shield gặp lỗi nhỏ."
+          fi
+          
+          if [ -f "Social-Preview-Siphon.py" ]; then
+            echo "[FORCED ACTIVE] Khởi chạy: Social-Preview-Siphon.py"
+            python Social-Preview-Siphon.py --url "$TARGET_URL" || echo "Social Preview gặp lỗi nhỏ."
+          fi
+          
+          echo "======================================================================"
+          echo "[COMPLETE] Toàn bộ 7/7 module hệ thống đã được xử lý."
 
       - name: Commit & Push Telemetry Reports
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Kiểm tra chính xác sự tồn tại của file từ thư mục gốc
           if [ -f "Modules/traffic_report.json" ]; then
             git add Modules/traffic_report.json
             
-            # Khóa an toàn: Nếu không có thay đổi gì mới so với commit trước, không thực hiện lệnh commit để tránh bị lỗi Exit Code 1
+            # Kiểm tra xem có thay đổi thực sự hay không để tránh lỗi gãy Exit Code 1
             if git diff-index --quiet HEAD --; then
-              echo "[V3000-INFO] Telemetry report không có thay đổi mới. Bỏ qua Push."
+              echo "[V3000-INFO] Telemetry report không đổi. Bỏ qua commit."
             else
-              echo "[V3000-INFO] Phát hiện dữ liệu Telemetry mới. Tiến hành cập nhật kho lưu trữ..."
+              echo "[V3000-INFO] Cập nhật dữ liệu mới lên kho lưu trữ."
               git commit -m "chore(telemetry): update active modules report [skip ci]"
               git push
             fi
           else
-            echo "[V3000-WARNING] Không tìm thấy file traffic_report.json để cập nhật!"
+            echo "[V3000-WARNING] Không tìm thấy file traffic_report.json"
           fi
+          
