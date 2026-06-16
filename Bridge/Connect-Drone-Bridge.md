@@ -14,7 +14,7 @@ Mô-đun vận hành hoàn toàn dựa trên cơ chế cấp phát quyền độ
 * **Biến `BRIDGE_TOKEN`**: Mã định danh động được ký gửi trực tiếp từ xung lực điều phối của Kho 4. Trường hợp chạy kiểm thử độc lập tại chỗ, hệ thống sẽ tự động hạ cấp xuống sử dụng mã token nội bộ của kho vệ tinh.
 #### 📊 Cấu trúc Gói tin Phản hồi (Payload Specification):
 Gói tin phát đi sử dụng sự kiện định danh nhằm kích hoạt ngược lại chuỗi hành động xử lý tại Tổng trạm:
-* **Event Type:** `DRONE_MESH_CONNECT`
+* **Event Type:** "DRONE_MESH_CONNECT" => Ánh Xạ Trực Tiếp Đến "ACTION WORKFLOW" Tại kho 4
 * **Cấu trúc dữ liệu gửi về Kho 4:**
   * `node_source`: Xác định tên nguồn vệ tinh đang báo cáo (Mặc định: `8000kicks`).
   * `target_controller`: Đường dẫn tuyệt đối của lõi điều khiển đích tiếp nhận tại Tổng trạm.
