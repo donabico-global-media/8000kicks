@@ -8,7 +8,7 @@ on:
       target_url:
         description: 'URL mục tiêu để quét dữ liệu'
         required: true
-        default: 'https://donabico-global-media.github.io/8000kicks'
+        default: 'https://donabico-global-media.github.io/'
 
 permissions:
   contents: write
@@ -41,7 +41,7 @@ jobs:
 
       - name: Run EATHESEN Active Modules
         env:
-          TARGET_URL: ${{ github.event.inputs.target_url || 'https://donabico-global-media.github.io/8000kicks' }}
+          TARGET_URL: ${{ github.event.inputs.target_url || 'https://donabico-global-media.github.io/' }}
         run: |
           echo "=== EATHESEN V3000-Ω ACTIVE-MODULES ==="
           echo "Triggered at: $(date -u)"
@@ -49,7 +49,7 @@ jobs:
           echo "======================================================================"
           
           cd Modules
-          # Gọi file điều phối trung tâm để phân luồng song song
+          # Gọi file điều phối trung tâm để phân luồng song song 7 lõi siphons cùng lúc
           python Active-Modules.py --url "$TARGET_URL"
           
           echo "======================================================================"
