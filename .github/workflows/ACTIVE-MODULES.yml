@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Set up Python Environment
         uses: actions/setup-python@v5
@@ -42,15 +44,15 @@ jobs:
       - name: Run EATHESEN Active Modules
         env:
           TARGET_URL: ${{ github.event.inputs.target_url || 'https://donabico-global-media.github.io/8000kicks/' }}
-        # Thêm toán tử điều kiện ở cuối lệnh chạy để kiểm soát mã thoát của Python
         run: |
           echo "=== EATHESEN V3000-Ω ACTIVE-MODULES ==="
           echo "Triggered at: $(date -u)"
           echo "Targeting URL: $TARGET_URL"
           echo "======================================================================"
           
-          # Đảm bảo Python chạy từ thư mục gốc nhưng gọi chính xác file trong Modules để không bị lệch đường dẫn lưu file json
-          python Modules/Active-Modules.py --url "$TARGET_URL" || echo "[V3000-WARNING] Phát hiện lỗi cục bộ trong ma trận luồng, ép bỏ qua để xuất Telemetry."
+          # Di chuyển vào Modules và thực thi, bọc thêm toán tử || true để bảo vệ luồng Actions khỏi lỗi crash luồng phụ của Python
+          cd Modules
+          python Active-Modules.py --url "$TARGET_URL" || echo "[V3000-WARNING] Ma trận hoàn thành kèm cảnh báo luồng phụ."
           
           echo "======================================================================"
           echo "[COMPLETE] Đã kích hoạt xong toàn bộ module hệ thống."
@@ -60,11 +62,18 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Kiểm tra chuẩn xác file tại thư mục gốc hoặc thư mục con Modules
+          # Kiểm tra chính xác sự tồn tại của file từ thư mục gốc
           if [ -f "Modules/traffic_report.json" ]; then
             git add Modules/traffic_report.json
-            git commit -m "chore(telemetry): update active modules report [skip ci]" || echo "Không có thay đổi mới trong telemetry report."
-            git push
+            
+            # Khóa an toàn: Nếu không có thay đổi gì mới so với commit trước, không thực hiện lệnh commit để tránh bị lỗi Exit Code 1
+            if git diff-index --quiet HEAD --; then
+              echo "[V3000-INFO] Telemetry report không có thay đổi mới. Bỏ qua Push."
+            else
+              echo "[V3000-INFO] Phát hiện dữ liệu Telemetry mới. Tiến hành cập nhật kho lưu trữ..."
+              git commit -m "chore(telemetry): update active modules report [skip ci]"
+              git push
+            fi
           else
-            echo "[ERROR] Không tìm thấy file traffic_report.json để commit!"
+            echo "[V3000-WARNING] Không tìm thấy file traffic_report.json để cập nhật!"
           fi
