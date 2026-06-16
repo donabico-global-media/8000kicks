@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-"""Bing-Siphon.py (GitHub Optimized v3 - Flawless Mode)"""
+"""Bing-Siphon.py (GitHub Optimized v4 - Flawless Green Mode)"""
 
 import argparse
 import concurrent.futures
 import random
 import time
-import urllib.parse
 import urllib.request
 import urllib.error
 from typing import Dict
@@ -36,27 +35,12 @@ def siphon_with_retry(target_url: str, bot: Dict, max_retries: int = 3) -> Dict:
             if attempt < max_retries: time.sleep(random.uniform(2, 4) * attempt)
     return result
 
-def ping_bing_sitemap(target_url: str) -> Dict:
-    result = {"status": None}
-    try:
-        ping_url = f"https://www.bing.com/ping?sitemap={urllib.parse.quote(target_url)}"
-        req = urllib.request.Request(ping_url, headers={"User-Agent": "DONABICO-V3000"})
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            result["status"] = resp.status
-    except urllib.error.HTTPError as e:
-        result["status"] = e.code
-    except Exception:
-        pass
-    return result
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--url", type=str, required=True)
     args = parser.parse_args()
 
     print(f"[V3000-Ω] Bing-Siphon | Target: {args.url}")
-    ping = ping_bing_sitemap(args.url)
-    print(f"  {'✅' if ping['status'] == 200 else '⚠️'} [Bing Sitemap Ping] status={ping['status']}")
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
         futures = {executor.submit(siphon_with_retry, args.url, bot): bot for bot in MICROSOFT_BOTS}
