@@ -1,5 +1,4 @@
 name: TRAFFIC-SIPHON
-
 on:
   schedule:
     - cron: '*/30 * * * *'
@@ -12,15 +11,13 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Run Traffic-Siphon
-        run: python3 Modules/Traffic-Siphon.py --url "https://donabico-global-media.github.io/8000kicks/"
-          
-      - name: Commit Report
+      - name: Run Siphon
+        run: python3 Modules/Traffic-Siphon.py
+      - name: Push Data
         run: |
           git config user.name "Siphon Bot"
           git config user.email "bot@github.com"
           git add Modules/traffic_report.json
-          git commit -m "Update traffic report"
+          git commit -m "Auto-update traffic log" || echo "No changes"
           git push
           
