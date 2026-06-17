@@ -1,0 +1,30 @@
+name: TRAFFIC-SIPHON
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      
+      # Kiểm tra vị trí file nếu vẫn bị lỗi "No such file"
+      - name: Verify file existence
+        run: ls -l Traffic-Siphon.py
+        
+      - name: Run Traffic-Siphon
+        run: python3 Traffic-Siphon.py --url "https://donabico-global-media.github.io/8000kicks/"
+          
+      - name: Commit Report
+        run: |
+          git config user.name "Siphon Bot"
+          git config user.email "bot@github.com"
+          git add traffic_report.json
+          git commit -m "Update traffic report"
+          git push
+          
