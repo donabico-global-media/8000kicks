@@ -11,17 +11,18 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v3
-        
+      - uses: actions/checkout@v4
+      
       - name: Run Traffic-Siphon
-        # Đã cập nhật đường dẫn vào thư mục Modules/
+        # Thực thi script nằm trong thư mục Modules
         run: python3 Modules/Traffic-Siphon.py --url "https://donabico-global-media.github.io/8000kicks/"
           
       - name: Commit Report
         run: |
           git config user.name "Siphon Bot"
           git config user.email "bot@github.com"
-          git add traffic_report.json
+          # Commit file report đã được di chuyển vào Modules
+          git add Modules/traffic_report.json
           git commit -m "Update traffic report"
           git push
           
