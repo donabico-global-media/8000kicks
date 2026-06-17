@@ -1,2 +1,1 @@
-// Thay nội dung cũ bằng dòng này
-alert("Website đã kết nối thành công với x.js!");
+document.body.style.border = "5px solid red";
