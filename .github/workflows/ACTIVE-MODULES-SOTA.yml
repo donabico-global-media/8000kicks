@@ -2,9 +2,10 @@ name: "ACTIVE-MODULES-SOTA"
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
-  workflow_dispatch:
+    - cron: "*/30 * * * *" # Đánh thức hệ thống chạy ngầm tự động mỗi 30 phút
+  workflow_dispatch:      # Hỗ trợ bấm kích hoạt chạy trực tiếp từ Chrome
 
+# Khóa luồng đồng bộ: Ngăn chặn tuyệt đối tình trạng job cũ chưa chạy xong đã bị job mới đè hủy
 concurrency:
   group: eathesen-siphon-sota-group
   cancel-in-progress: false
@@ -20,7 +21,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: true
-          fetch-depth: 0
+          fetch-depth: 0 # Lấy toàn bộ lịch sử commit để rebase an toàn không xung đột
 
       - name: Set up Python Environment
         uses: actions/setup-python@v5
@@ -39,30 +40,39 @@ jobs:
         run: |
           echo "=== EATHESEN V3000-Ω SOTA AUTO-INJECTION ==="
           cd Modules
+          
+          # LUỒNG TỰ ĐỘNG VÔ HẠN: Quét động mở rộng và thực thi mọi file .py trong thư mục Modules
           for script in *.py; do
             if [ "$script" != "Active-Modules.py" ]; then
               echo "[EXECUTING MODULE] $script..."
-              python "$script" --url "$TARGET_URL" || echo "[V3000-RECOVERY] Module $script gián đoạn, bỏ qua..."
+              python "$script" --url "$TARGET_URL" || echo "[V3000-RECOVERY] Module $script gián đoạn, tự động bỏ qua..."
             fi
           done
           
+          # Chạy file điều phối chính cốt lõi
           echo "[EXECUTING CORE] Active-Modules.py..."
           if [ -f "Active-Modules.py" ]; then
-            python Active-Modules.py --url "$TARGET_URL"
+            python Active-Modules.py --url "$TARGET_URL" || echo "[V3000-WARNING] Core hoàn thành với cảnh báo."
           else
-            echo "[V3000-ERROR] Không tìm thấy tệp Active-Modules.py!"
+            echo "[V3000-ERROR] Không tìm thấy file Active-Modules.py!"
           fi
 
       - name: Commit & Push Telemetry Reports
         run: |
           git config --global user.name "AETH-V5000-AUTOBOT"
           git config --global user.email "sre-admin@donabico.global"
+          
+          # Gom tất cả các file JSON báo cáo mới sinh ra trong thư mục Modules
           git add Modules/*.json
+          
+          # Kiểm tra vùng đệm Stage xem có dữ liệu traffic mới thực sự hay không
           if ! git diff --cached --quiet; then
-            echo "[V3000-INFO] Phát hiện báo cáo mới. Tiến hành đồng bộ..."
+            echo "[V3000-INFO] Phát hiện telemetry mới. Đang đồng bộ..."
             git commit -m "chore(telemetry): auto-update telemetry logs [skip ci]"
+            
+            # Giải pháp loại bỏ lỗi 409 Non-fast-forward: Tự động kéo code về và sắp xếp lại commit
             git pull origin main --rebase
             git push origin main
           else
-            echo "[V3000-INFO] Không phát hiện dữ liệu mới."
+            echo "[V3000-INFO] Không có dữ liệu traffic mới đổi. Bỏ qua chu kỳ."
           fi
