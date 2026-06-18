@@ -2,21 +2,21 @@ name: "ACTIVE-MODULES-SOTA"
 
 on:
   schedule:
-    - cron: "0 */6 * * *" # Duy trì chu kỳ chạy tự động 6 tiếng một lần như file gốc của bạn
+    - cron: "0 */6 * * *" # Duy trì chu kỳ tự động quét và tiêm giao diện 6 tiếng một lần
   workflow_dispatch:
     inputs:
       target_url:
-        description: 'URL mục tiêu để quét dữ liệu'
+        description: 'URL mục tiêu để rà soát AdTech'
         required: true
         default: 'https://donabico-global-media.github.io/8000kicks/'
 
 # GIẢI PHÁP CỐT LÕI: Khóa luồng đồng bộ để chặn hoàn toàn lỗi tự hủy "Cancelled" của GitHub Pages
 concurrency:
   group: github-pages-deploy-lock
-  cancel-in-progress: false # Ép luồng triển khai xếp hàng tuần tự, không được hủy ngang job đang chạy
+  cancel-in-progress: false # Ép luồng triển khai xếp hàng tuần tự, không hủy ngang job đang chạy
 
 permissions:
-  contents: write
+  contents: write # Cấp quyền ghi cao cấp để Robot chỉnh sửa trực tiếp index.html và push lên kho
 
 jobs:
   execute-siphon-matrix:
@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: true
-          fetch-depth: 0 # Lấy toàn bộ lịch sử lịch trình commit phục vụ rebase an toàn
+          fetch-depth: 0 # Lấy toàn bộ lịch sử phục vụ việc rebase mã nguồn an toàn
 
       - name: Set up Python Environment
         uses: actions/setup-python@v5
@@ -39,41 +39,37 @@ jobs:
           python -m pip install --upgrade pip
           pip install httpx pydantic
 
-      - name: Run EATHESEN Active Modules
+      - name: Run EATHESEN V3000-Ω Matrix Injection
         env:
           TARGET_URL: ${{ github.event.inputs.target_url || 'https://donabico-global-media.github.io/8000kicks/' }}
         run: |
-          echo "=== EATHESEN V3000-Ω ACTIVE-MODULES ==="
+          echo "=== EATHESEN V3000-Ω MASTER MATRIX INJECTOR ==="
           cd Modules
           
-          # Thực thi file điều phối lõi an toàn
+          # Đổi luật chơi: Giao 100% quyền đại phẫu, tối ưu SEO/Affiliate và tiêm giao diện cho Active-Modules.py
           if [ -f "Active-Modules.py" ]; then
-            python Active-Modules.py --url "$TARGET_URL" || echo "[WARNING] Ma trận chính có cảnh báo nhẹ."
+            echo "[FORCED ACTIVE] Khởi chạy Bộ não chỉ huy trung tâm..."
+            python Active-Modules.py --url "$TARGET_URL"
+          else
+            echo "[CRITICAL ERROR] Không tìm thấy tệp điều phối lõi Active-Modules.py!"
+            exit 1
           fi
-          
-          # Ép chạy trực tiếp các lõi siphoning nếu tệp tin tồn tại
-          for script in Affiliate-Network-Siphon.py SEO-Shield-Siphon.py Social-Preview-Siphon.py Traffic-Siphon.py; do
-            if [ -f "$script" ]; then
-              echo "[FORCED ACTIVE] Khởi chạy: $script"
-              python "$script" --url "$TARGET_URL" || echo "Module $script gặp gián đoạn nhỏ."
-            fi
-          done
 
-      - name: Commit & Push Telemetry Reports
+      - name: Commit & Push Production Interface & Reports
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Đảm bảo nhận diện đúng file log bất kể script Python chạy ở thư mục nào
-          git add Modules/traffic_report.json || git add traffic_report.json || true
+          # ĐĂNG KÝ PHẠM VI TÁC ĐỘNG 100%: Gom file index.html đã được tiêm dữ liệu trực tiếp cùng các file log JSON
+          git add index.html Modules/traffic_report.json || git add index.html || true
           
           if ! git diff-index --quiet HEAD --; then
-            echo "[V3000-INFO] Phát hiện dữ liệu thay đổi. Tiến hành đồng bộ an toàn..."
-            git commit -m "chore(telemetry): update active modules report [skip ci]"
+            echo "[V3000-INFO] Phát hiện giao diện thay đổi trực tiếp từ Robot. Tiến hành đồng bộ trực tuyến..."
+            git commit -m "feat(adtech): dynamic active-modules production injection [skip ci]"
             
-            # CHIẾN LƯỢC AN TOÀN: Rebase đồng bộ trước khi đẩy để loại bỏ hoàn toàn lỗi xung đột Git
+            # CHIẾN LƯỢC AN TOÀN: Rebase đồng bộ trước khi đẩy để loại bỏ hoàn toàn lỗi xung đột Git (Code 409)
             git pull origin main --rebase
             git push origin main
           else
-            echo "[V3000-INFO] Không phát hiện dữ liệu mới. Bỏ qua chu kỳ commit."
+            echo "[V3000-INFO] Không phát hiện thay đổi mới trên index.html. Bỏ qua chu kỳ commit."
           fi
