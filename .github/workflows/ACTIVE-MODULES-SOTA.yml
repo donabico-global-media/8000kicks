@@ -2,7 +2,7 @@ name: "ACTIVE-MODULES-SOTA"
 
 on:
   schedule:
-    - cron: "0 */6 * * *" # Kích hoạt chu kỳ tự động quét và tiêm mã nguồn mỗi 6 tiếng
+    - cron: "0 */6 * * *" # Robot tự động thức dậy đại phẫu trang web mỗi 6 tiếng một lần
   workflow_dispatch:
     inputs:
       target_url:
