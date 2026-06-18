@@ -1,14 +1,9 @@
-name: ACTIVE-MODULES
+name: "ACTIVE-MODULES-SOTA-SYNC"
 
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '*/30 * * * *' # Kích hoạt mỗi 30 phút
   workflow_dispatch:
-    inputs:
-      target_url:
-        description: 'URL mục tiêu để quét dữ liệu'
-        required: true
-        default: 'https://donabico-global-media.github.io/8000kicks/'
 
 permissions:
   contents: write
@@ -16,7 +11,6 @@ permissions:
 jobs:
   execute-siphon-matrix:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -26,74 +20,44 @@ jobs:
       - name: Set up Python Environment
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
-
-      - name: Cache Pip Dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          python-version: '3.12' # Sử dụng phiên bản SOTA mới nhất
 
       - name: Install Ecosystem Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install httpx pydantic
+          pip install httpx pydantic loguru # Thêm loguru để debug chuyên nghiệp
 
-      - name: Run EATHESEN Active Modules
+      - name: Run EATHESEN Dynamic Siphon Matrix
         env:
-          TARGET_URL: ${{ github.event.inputs.target_url || 'https://donabico-global-media.github.io/8000kicks/' }}
+          TARGET_URL: 'https://donabico-global-media.github.io/8000kicks/'
         run: |
-          echo "=== EATHESEN V3000-Ω ACTIVE-MODULES ==="
-          echo "Triggered at: $(date -u)"
-          echo "Targeting URL: $TARGET_URL"
-          echo "======================================================================"
-          
+          echo "=== EATHESEN V3000-Ω SOTA AUTO-INJECTION ==="
           cd Modules
           
-          # 1. Chạy file điều phối chính (Kích hoạt 4 module mặc định)
-          python Active-Modules.py --url "$TARGET_URL" || echo "[V3000-WARNING] Ma trận chính hoàn thành với cảnh báo."
+          # Tự động duyệt và kích hoạt mọi file .py trong thư mục Modules
+          # Loại bỏ chính file điều phối để tránh đệ quy nếu cần thiết
+          for script in *.py; do
+            if [ "$script" != "Active-Modules.py" ]; then
+              echo "[EXECUTING] $script..."
+              # Cơ chế tự vá lỗi: Nếu chạy lỗi vẫn tiếp tục các module khác
+              python "$script" --url "$TARGET_URL" || echo "[V3000-RECOVERY] Module $script gặp lỗi, bỏ qua và tiếp tục..."
+            fi
+          done
           
-          echo "======================================================================"
-          echo "[V3000-BRIDGE] Tiến hành kích hoạt cưỡng bức các lõi Siphon bị sót..."
-          
-          # 2. Ép chạy trực tiếp 3 lõi marketing 0 đồng quan trọng nhất
-          if [ -f "Affiliate-Network-Siphon.py" ]; then
-            echo "[FORCED ACTIVE] Khởi chạy: Affiliate-Network-Siphon.py"
-            python Affiliate-Network-Siphon.py --url "$TARGET_URL" || echo "Affiliate Siphon gặp lỗi nhỏ."
-          fi
-          
-          if [ -f "SEO-Shield-Siphon.py" ]; then
-            echo "[FORCED ACTIVE] Khởi chạy: SEO-Shield-Siphon.py"
-            python SEO-Shield-Siphon.py --url "$TARGET_URL" || echo "SEO Shield gặp lỗi nhỏ."
-          fi
-          
-          if [ -f "Social-Preview-Siphon.py" ]; then
-            echo "[FORCED ACTIVE] Khởi chạy: Social-Preview-Siphon.py"
-            python Social-Preview-Siphon.py --url "$TARGET_URL" || echo "Social Preview gặp lỗi nhỏ."
-          fi
-          
-          echo "======================================================================"
-          echo "[COMPLETE] Toàn bộ 7/7 module hệ thống đã được xử lý."
+          # Chạy file điều phối chính cuối cùng
+          python Active-Modules.py --url "$TARGET_URL"
 
       - name: Commit & Push Telemetry Reports
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "AETH-V5000-AUTOBOT"
+          git config --global user.email "sre-admin@donabico.global"
           
-          if [ -f "Modules/traffic_report.json" ]; then
+          # Chỉ commit nếu có thay đổi trong file báo cáo
+          if [ -n "$(git status --porcelain Modules/traffic_report.json)" ]; then
             git add Modules/traffic_report.json
-            
-            # Kiểm tra xem có thay đổi thực sự hay không để tránh lỗi gãy Exit Code 1
-            if git diff-index --quiet HEAD --; then
-              echo "[V3000-INFO] Telemetry report không đổi. Bỏ qua commit."
-            else
-              echo "[V3000-INFO] Cập nhật dữ liệu mới lên kho lưu trữ."
-              git commit -m "chore(telemetry): update active modules report [skip ci]"
-              git push
-            fi
+            git commit -m "chore(siphon): auto-update telemetry [skip ci]"
+            git push origin main
           else
-            echo "[V3000-WARNING] Không tìm thấy file traffic_report.json"
+            echo "[V3000-INFO] Không có dữ liệu mới để đồng bộ."
           fi
           
