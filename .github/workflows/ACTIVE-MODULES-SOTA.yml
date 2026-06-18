@@ -2,7 +2,7 @@ name: "ACTIVE-MODULES-SOTA"
 
 on:
   schedule:
-    - cron: "0 */6 * * *" # Duy trì chu kỳ tự động quét và tiêm giao diện 6 tiếng một lần
+    - cron: "0 */6 * * *" # Robot tự động thức dậy đại phẫu trang web mỗi 6 tiếng một lần
   workflow_dispatch:
     inputs:
       target_url:
@@ -10,13 +10,13 @@ on:
         required: true
         default: 'https://donabico-global-media.github.io/8000kicks/'
 
-# GIẢI PHÁP CỐT LÕI: Khóa luồng đồng bộ để chặn hoàn toàn lỗi tự hủy "Cancelled" của GitHub Pages
+# CHỐNG LỖI CONCURRENCY: Khóa luồng deploy để tránh tình trạng các job đè chết nhau gây lỗi Cancelled
 concurrency:
   group: github-pages-deploy-lock
-  cancel-in-progress: false # Ép luồng triển khai xếp hàng tuần tự, không hủy ngang job đang chạy
+  cancel-in-progress: false
 
 permissions:
-  contents: write # Cấp quyền ghi cao cấp để Robot chỉnh sửa trực tiếp index.html và push lên kho
+  contents: write # Cấp quyền ghi cao cấp cho Robot sửa index.html
 
 jobs:
   execute-siphon-matrix:
@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: true
-          fetch-depth: 0 # Lấy toàn bộ lịch sử phục vụ việc rebase mã nguồn an toàn
+          fetch-depth: 0 # Lấy toàn bộ lịch sử Git phục vụ việc rebase an toàn
 
       - name: Set up Python Environment
         uses: actions/setup-python@v5
@@ -46,12 +46,12 @@ jobs:
           echo "=== EATHESEN V3000-Ω MASTER MATRIX INJECTOR ==="
           cd Modules
           
-          # Đổi luật chơi: Giao 100% quyền đại phẫu, tối ưu SEO/Affiliate và tiêm giao diện cho Active-Modules.py
+          # Thực thi kiến trúc mới: Truyền tham số cấu hình URL trực tiếp vào file chỉ huy lõi
           if [ -f "Active-Modules.py" ]; then
-            echo "[FORCED ACTIVE] Khởi chạy Bộ não chỉ huy trung tâm..."
+            echo "[FORCED ACTIVE] Bộ não trung tâm bắt đầu tiêm và sửa đổi mã nguồn..."
             python Active-Modules.py --url "$TARGET_URL"
           else
-            echo "[CRITICAL ERROR] Không tìm thấy tệp điều phối lõi Active-Modules.py!"
+            echo "[CRITICAL ERROR] Thiếu file Active-Modules.py!"
             exit 1
           fi
 
@@ -60,16 +60,16 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # ĐĂNG KÝ PHẠM VI TÁC ĐỘNG 100%: Gom file index.html đã được tiêm dữ liệu trực tiếp cùng các file log JSON
+          # ĐĂNG KÝ PHẠM VI TÁC ĐỘNG: Đóng gói đồng thời index.html đã tối ưu và file báo cáo JSON về kho
           git add index.html Modules/traffic_report.json || git add index.html || true
           
           if ! git diff-index --quiet HEAD --; then
-            echo "[V3000-INFO] Phát hiện giao diện thay đổi trực tiếp từ Robot. Tiến hành đồng bộ trực tuyến..."
+            echo "[V3000-INFO] Phát hiện thay đổi mã nguồn từ Robot. Tiến hành cập nhật trực tuyến..."
             git commit -m "feat(adtech): dynamic active-modules production injection [skip ci]"
             
-            # CHIẾN LƯỢC AN TOÀN: Rebase đồng bộ trước khi đẩy để loại bỏ hoàn toàn lỗi xung đột Git (Code 409)
+            # GIẢI PHÁP CHỐNG XUNG ĐỘT: Đồng bộ dữ liệu mới nhất bằng Rebase trước khi đẩy lên Main
             git pull origin main --rebase
             git push origin main
           else
-            echo "[V3000-INFO] Không phát hiện thay đổi mới trên index.html. Bỏ qua chu kỳ commit."
+            echo "[V3000-INFO] Không phát hiện thay đổi mới. Chu kỳ đóng gói kết thúc."
           fi
