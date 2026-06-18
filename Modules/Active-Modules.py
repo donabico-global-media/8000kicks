@@ -1,79 +1,104 @@
 #!/usr/bin/env python3
 """
-EATHESEN V3000-Ω | 8000KICKS LIVE FACTORY INJECTOR
-Chức năng: Kích hoạt ma trận Siphon kèm tham số và TIÊM TRỰC TIẾP 100% vào Landing Page 8000Kicks
+EATHESEN V3000-Ω | ULTRA MULTI-THREADING INJECTOR WITH 2PX VISUAL SHIELD (8000KICKS)
+Chức năng: Tự động phát hiện HÀNG NGÀN module, chạy SONG SONG siêu tốc và TIÊM KHUNG VIỀN ĐỎ 2PX
 """
 import os
 import re
 import sys
+import concurrent.futures
 from datetime import datetime, timezone
 
-def run_all_siphons(target_url):
-    print(f"[V3000-8000KICKS] Khởi chạy chuỗi module quan trắc ngầm cho URL: {target_url}")
-    
-    # GIẢI PHÁP SỬA LỖI: Truyền trực tiếp tham số --url vào các module con để chặn lỗi Argument Error
-    os.system(f"python3 Traffic-Siphon.py --url {target_url}")
-    os.system(f"python3 Affiliate-Network-Siphon.py --url {target_url}")
-    os.system(f"python3 SEO-Shield-Siphon.py --url {target_url}")
-    os.system(f"python3 Social-Preview-Siphon.py --url {target_url}")
-    os.system(f"python3 Google-Siphon.py --url {target_url}")
-    os.system(f"python3 Bing-Siphon.py --url {target_url}")
-
-def inject_production_html(target_url):
-    index_path = os.path.join("..", "index.html")
-    if not os.path.exists(index_path):
-        index_path = "index.html"
+def execute_single_module(module_file, target_url):
+    """Hàm thực thi một module độc lập và bắt lỗi tránh làm sập luồng chính"""
+    if module_file == "Active-Modules.py":
+        return None
         
-    if not os.path.exists(index_path):
-        print("[ERROR] Không tìm thấy file index.html của 8000Kicks!")
-        return
+    try:
+        # Ép chạy kèm tham số --url khép kín để chặn lỗi Argument Error
+        exit_code = os.system(f"python3 {module_file} --url {target_url} > /dev/null 2>&1")
+        if exit_code == 0:
+            return f"✅ {module_file} -> Success"
+        else:
+            return f"❌ {module_file} -> Failed (Code {exit_code})"
+    except Exception as e:
+        return f"💥 {module_file} -> Error: {str(e)}"
 
-    print(f"[V3000-INJECTOR] Đại phẫu và tiêm dữ liệu vào: {index_path}")
+def run_massive_siphon_matrix(target_url):
+    print("[V3000-Ω] Khởi chạy bộ quét tự động cấu trúc đa luồng...")
+    all_files = os.listdir(".")
+    module_targets = [f for f in all_files if f.endswith(".py") and f != "Active-Modules.py"]
+    
+    print(f"[V3000-Ω] Phát hiện tổng cộng {len(module_targets)} module thực chiến.")
+    
+    results = []
+    max_workers = 50 
+    
+    print(f"[V3000-Ω] Đang phân bổ ma trận vào {max_workers} luồng xử lý cao tốc...")
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = {executor.submit(execute_single_module, mod, target_url): mod for mod in module_targets}
+        for future in concurrent.futures.as_completed(futures):
+            res = future.result()
+            if res:
+                results.append(res)
+                
+    print(f"[V3000-Ω] Hoàn thành quét ma trận. Đã xử lý {len(results)}/{len(module_targets)} module.")
+
+def inject_production_html():
+    index_path = os.path.join("..", "index.html")
+    if not os.path.exists(index_path): index_path = "index.html"
+    if not os.path.exists(index_path): return
+
+    print(f"[V3000-INJECTOR] Tiến hành đại phẫu toàn diện và bảo lưu Khung viền đỏ 2px...")
     with open(index_path, "r", encoding="utf-8") as f:
         html = f.read()
 
-    # 1. THỪA HƯỞNG TỪ SEO-SHIELD: Bơm từ khóa giày gai dầu chống nước vào Head
+    # 1. BẢO LƯU KHUNG VIỀN ĐỎ 2PX: Chèn CSS khung viền tinh chỉnh độ dày siêu mảnh vào <head>
+    red_border_css = "<style>body { border: 2px solid red !important; box-sizing: border-box; }</style>"
+    if "<head>" in html and "border: 2px solid red" not in html:
+        html = html.replace("<head>", f"<head>{red_border_css}")
+
+    # 2. SEO-SHIELD: Bơm từ khóa giày gai dầu chống nước vào Head
     seo_tags = """
     <meta name="keywords" content="8000Kicks, giày gai dầu, giày chống nước, waterproof hemp shoes, sustainable footwear, Donabico Global Media">
     <meta name="description" content="Khám phá dòng giày làm từ sợi gai dầu tự nhiên chống nước 100% của 8000Kicks tại phân khu Donabico.">"""
     if "<head>" in html and "8000Kicks" not in html:
         html = html.replace("<head>", f"<head>{seo_tags}")
 
-    # 2. THỪA HƯỞNG TỪ SOCIAL-PREVIEW: Tối ưu OpenGraph hiển thị link mạng xã hội
+    # 3. SOCIAL-PREVIEW: Tối ưu OpenGraph hiển thị khi share link mạng xã hội
     og_tags = """
     <meta property="og:title" content="8000Kicks - Giày Gai Dầu Chống Nước Đầu Tiên Trên Thế Giới">
     <meta property="og:image" content="https://donabico-global-media.github.io/8000kicks/assets/hemp-shoes-banner.jpg">"""
     if "<head>" in html and "og:title" not in html:
         html = html.replace("<head>", f"<head>{og_tags}")
 
-    # 3. THỪA HƯỞNG TỪ TRAFFIC-SIPHON: Tiêm thanh trạng thái Donabico Global Media System
+    # 4. TRAFFIC-SIPHON: Tiêm thanh trạng thái Donabico Global Media System
     current_time = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
     status_banner = f"""
     <div id="dnbc-adtech-banner" style="background: linear-gradient(90deg, #11998e, #38ef7d); color: #000; text-align: center; font-family: sans-serif; font-size: 11px; padding: 6px; font-weight: bold; border-bottom: 2px solid #fff;">
-        🛡️ DONABICO GLOBAL MEDIA SYSTEM | 8000KICKS NODE ACTIVE AT {current_time}
+        🛡️ DONABICO GLOBAL MEDIA SYSTEM | MASSIVE MATRIX NODE ACTIVE AT {current_time}
     </div>"""
+    
     html = re.sub(r'<div id="dnbc-adtech-banner">.*?</div>', '', html, flags=re.DOTALL)
     if "<body>" in html:
         html = html.replace("<body>", f"<body>\n    {status_banner}")
 
-    # 4. THỪA HƯỞNG TỪ AFFILIATE-NETWORK: Cố định tuyến link phân phối tiếp thị liên kết trực tiếp
+    # 5. AFFILIATE-NETWORK: Tuyến link phân phối tiếp thị liên kết trực tiếp
     target_aff_url = "https://donabico-global-media.github.io/shop/8000kicks.html"
     html = re.sub(r'href="[^"]*placeholder_affiliate_link[^"]*"', f'href="{target_aff_url}"', html)
 
-    # 5. THỪA HƯỞNG TỪ AI-CACHE-SIPHON: Nén dung lượng HTML cực hạn
+    # 6. Nén mã nguồn cực hạn loại bỏ khoảng trắng thừa
     compressed_html = "\n".join([line.strip() for line in html.split("\n") if line.strip()])
 
     with open(index_path, "w", encoding="utf-8") as f:
         f.write(compressed_html)
-    print("[SUCCESS] Lộ trình tiêm dữ liệu trực tiếp 100% vào 8000Kicks hoàn tất!")
+    print("[SUCCESS] Đã tiêm khung viền 2px và tối ưu hóa dữ liệu thành công vào 8000Kicks!")
 
 if __name__ == "__main__":
-    # Đọc tham số URL truyền từ file Workflow, mặc định nếu không truyền là link 8000kicks
     target = "https://donabico-global-media.github.io/8000kicks/"
     if "--url" in sys.argv:
         idx = sys.argv.index("--url")
-        if idx + 1 < len(sys.argv):
-            target = sys.argv[idx + 1]
+        if idx + 1 < len(sys.argv): target = sys.argv[idx + 1]
 
-    run_all_siphons(target)
-    inject_production_html(target)
+    run_massive_siphon_matrix(target)
+    inject_production_html()
