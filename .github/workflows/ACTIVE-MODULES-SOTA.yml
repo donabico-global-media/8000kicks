@@ -2,77 +2,67 @@ name: "ACTIVE-MODULES-SOTA"
 
 on:
   schedule:
-    - cron: '*/30 * * * *' # Kích hoạt chu kỳ cố định mỗi 30 phút[cite: 1]
-  workflow_dispatch:      # Hỗ trợ kích hoạt thủ công từ giao diện[cite: 1]
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
 
-# Khóa luồng song song: Ngăn chặn triệt để tình trạng các job tự hủy nhau khi ghi đè dữ liệu telemetry
 concurrency:
   group: eathesen-siphon-sota-group
   cancel-in-progress: false
 
 permissions:
-  contents: write # Cấp quyền ghi mã nguồn để cập nhật tệp tin báo cáo[cite: 1]
+  contents: write
 
 jobs:
   execute-siphon-matrix:
-    runs-on: ubuntu-latest # Sử dụng môi trường máy ảo Ubuntu mới nhất[cite: 1]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          persist-credentials: true[cite: 1]
-          fetch-depth: 0 # Lấy toàn bộ lịch sử git để đảm bảo tính năng Rebase vận hành an toàn
+          persist-credentials: true
+          fetch-depth: 0
 
       - name: Set up Python Environment
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12' # Môi trường thực thi SOTA tối ưu[cite: 1]
+          python-version: "3.12"
 
       - name: Install Ecosystem Dependencies
         run: |
-          python -m pip install --upgrade pip[cite: 1]
-          pip install httpx pydantic loguru[cite: 1]
+          python -m pip install --upgrade pip
+          pip install httpx pydantic loguru
           mkdir -p Modules
 
       - name: Run EATHESEN Dynamic Siphon Matrix
         env:
-          TARGET_URL: 'https://donabico-global-media.github.io/8000kicks/'[cite: 1]
+          TARGET_URL: "https://donabico-global-media.github.io/8000kicks/"
         run: |
-          echo "=== EATHESEN V3000-Ω SOTA AUTO-INJECTION ==="[cite: 1]
-          cd Modules[cite: 1]
-          
-          # Quét động và kích hoạt tuần tự toàn bộ các module thu thập dữ liệu ngầm
+          echo "=== EATHESEN V3000-Ω SOTA AUTO-INJECTION ==="
+          cd Modules
           for script in *.py; do
-            if [ "$script" != "Active-Modules.py" ]; then[cite: 1]
-              echo "[EXECUTING MODULE] $script..."[cite: 1]
-              python "$script" --url "$TARGET_URL" || echo "[V3000-RECOVERY] Module $script tạm thời gián đoạn, tự động bỏ qua..."[cite: 1]
+            if [ "$script" != "Active-Modules.py" ]; then
+              echo "[EXECUTING MODULE] $script..."
+              python "$script" --url "$TARGET_URL" || echo "[V3000-RECOVERY] Module $script gián đoạn, bỏ qua..."
             fi
           done
           
-          # Thực thi cấu trúc điều phối lõi cuối cùng
           echo "[EXECUTING CORE] Active-Modules.py..."
           if [ -f "Active-Modules.py" ]; then
-            python Active-Modules.py --url "$TARGET_URL"[cite: 1]
+            python Active-Modules.py --url "$TARGET_URL"
           else
-            echo "[V3000-ERROR] Không tìm thấy tệp Active-Modules.py cốt lõi!"
+            echo "[V3000-ERROR] Không tìm thấy tệp Active-Modules.py!"
           fi
 
       - name: Commit & Push Telemetry Reports
         run: |
-          git config --global user.name "AETH-V5000-AUTOBOT"[cite: 1]
-          git config --global user.email "sre-admin@donabico.global"[cite: 1]
-          
-          # Theo dõi toàn bộ các thay đổi của tệp báo cáo cấu trúc JSON trong thư mục Modules/
+          git config --global user.name "AETH-V5000-AUTOBOT"
+          git config --global user.email "sre-admin@donabico.global"
           git add Modules/*.json
-          
-          # Kiểm tra vùng đệm Stage và tiến hành đẩy dữ liệu chống xung đột luồng
           if ! git diff --cached --quiet; then
-            echo "[V3000-INFO] Phát hiện báo cáo Telemetry mới. Tiến hành đóng gói..."
-            git commit -m "chore(telemetry): auto-update telemetry logs [skip ci]"[cite: 1]
-            
-            # Đồng bộ an toàn bằng cơ chế rebase để loại bỏ lỗi Non-fast-forward (Xung đột 409)
+            echo "[V3000-INFO] Phát hiện báo cáo mới. Tiến hành đồng bộ..."
+            git commit -m "chore(telemetry): auto-update telemetry logs [skip ci]"
             git pull origin main --rebase
-            git push origin main[cite: 1]
+            git push origin main
           else
-            echo "[V3000-INFO] Không phát hiện dữ liệu mới. Bỏ qua chu kỳ commit."[cite: 1]
+            echo "[V3000-INFO] Không phát hiện dữ liệu mới."
           fi
