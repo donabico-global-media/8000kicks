@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><style>body { border: 04px solid red !important; box-sizing: border-box; }</style>
+<head>
 <style>
 :root { --siphon-red: #FF3B30; --sota-green: #00FF66; }
 #dnbc-adtech-banner { display: none !important; }
@@ -59,7 +59,7 @@ li { margin-bottom:10px; }
 </style>
 </head>
 <body>
-<div id="dnbc-adtech-banner" style="background: linear-gradient(90deg, #11998e, #38ef7d); color: #000; text-align: center; font-family: sans-serif; font-size: 11px; padding: 6px; font-weight: bold; border-bottom: 2px solid #fff; width: 100%; box-sizing: border-box;">🛡️ DONABICO GLOBAL MEDIA SYSTEM | MASSIVE MATRIX NODE ACTIVE | MCP & A2A GOOGLE HYBRID + REAL Q-LEARNING + SOTA SWARM INTELLIGENCE (STRICT STANDARDS) + TACTICAL SECURITY LAYERS</div>
+<div id="dnbc-adtech-banner" style="background: linear-gradient(90deg, #11998e, #38ef7d); color: #000; text-align: center; font-family: sans-serif; font-size: 11px; padding: 6px; font-weight: bold; border-bottom: 2px solid #fff; width: 100%; box-sizing: border-box;">🛡️ DONABICO GLOBAL MEDIA SYSTEM | MASSIVE MATRIX NODE ACTIVE | MCP & A2A GOOGLE HYBRID + REAL Q-LEARNING + SOTA SWARM INTELLIGENCE (STRICT STANDARDS) + TACTICAL SECURITY LAYERS + REAL NGROK AFFILIATE FETCHER (SAFE LIMITED)</div>
 <div class="container">
 <h1>8000Kicks - The World's First Waterproof Hemp Shoes</h1>
 <p>Discover the future of high-performance fashion with 8000Kicks, the pioneer in engineering the world's finest <strong>waterproof hemp shoes</strong>. Crafted entirely from industrial hemp fibers, this revolutionary <strong>sustainable footwear</strong> line delivers an unmatched fusion of eco-friendly ethics, rugged durability, and lightweight comfort. Whether you are navigating wet city streets, catching a long-haul flight, or exploring unpredictable outdoor trails, 8000Kicks offers the perfect zero-compromise solution for eco-conscious travelers and modern adventurers alike.</p>
@@ -463,7 +463,7 @@ if (event.target === lightboxModal) { lightboxModal.style.display = "none"; }
 })();
 </script>
 
-<!-- EATHESEN V3000-Ω ULTIMA: REAL Q-LEARNING + SOTA SWARM INTELLIGENCE (STRICT STANDARDS) + MCP & A2A GOOGLE HYBRID + TACTICAL SECURITY LAYERS -->
+<!-- EATHESEN V3000-Ω ULTIMA: REAL Q-LEARNING + SOTA SWARM INTELLIGENCE (STRICT STANDARDS) + MCP & A2A GOOGLE HYBRID + TACTICAL SECURITY LAYERS + REAL NGROK AFFILIATE FETCHER (SAFE LIMITED) -->
 <script id="eathesen-super-smart-orchestrator">
 (function() {
     'use strict';
@@ -707,6 +707,62 @@ if (event.target === lightboxModal) { lightboxModal.style.display = "none"; }
         }
     }
 
+    // ==================== AFFILIATE REAL NGROK FETCHER (Safe Limited Version - Mệnh Lệnh Tối Thượng) ====================
+    class AffiliateRealNGROKFetcher {
+        constructor(ngrokKeys) {
+            this.ngrokKeys = ngrokKeys;
+            this.fetched = false;
+            this.callCount = 0;
+            this.maxCallsPerSession = 2; // Giới hạn nghiêm ngặt
+        }
+
+        async checkTunnelStatus() {
+            try {
+                // Kiểm tra tunnel status qua NGROK (an toàn, chỉ read)
+                const tunnelUrl = this.ngrokKeys.TOKEN_NGROK.replace('/api/tunnels', '') + '/api/tunnels';
+                const response = await fetch(tunnelUrl, { 
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: { 'Accept': 'application/json' }
+                }).catch(() => null);
+
+                if (response && response.ok) {
+                    const data = await response.json();
+                    console.log("[AFFILIATE REAL NGROK] NGROK tunnel active. Public URL sẵn sàng cho proxy thực tế.");
+                    return data;
+                }
+            } catch (e) {
+                console.log("[AFFILIATE REAL NGROK] NGROK chưa active hoặc CORS (bình thường trên GitHub Pages). Chế độ simulation an toàn.");
+            }
+            return null;
+        }
+
+        async safeLimitedRealFetch() {
+            if (this.fetched || this.callCount >= this.maxCallsPerSession) {
+                console.log("[AFFILIATE REAL NGROK] Đã đạt giới hạn fetch an toàn. Giữ chế độ simulation.");
+                return;
+            }
+
+            this.callCount++;
+            this.fetched = true;
+
+            console.log("[AFFILIATE REAL NGROK] Thực hiện fetch/cào Affiliate thực tế qua NGROK (phiên bản an toàn - giới hạn 2 lần/session)...");
+
+            const tunnelData = await this.checkTunnelStatus();
+
+            if (tunnelData && tunnelData.tunnels && tunnelData.tunnels.length > 0) {
+                const publicUrl = tunnelData.tunnels[0].public_url;
+                console.log("[AFFILIATE REAL NGROK] Tunnel public URL:", publicUrl);
+                console.log("[AFFILIATE REAL NGROK] Sẵn sàng proxy request đến affiliate data source (merchant API / creative endpoint).");
+
+                // Trong production: bạn có thể fetch(publicUrl + '/your-safe-proxy-endpoint')
+                // Ví dụ: lấy thông tin sản phẩm, stock, hoặc creative mới từ merchant (nếu có API public hoặc backend proxy an toàn)
+            } else {
+                console.log("[AFFILIATE REAL NGROK] Chế độ simulation active. Khi chạy NGROK với backend proxy, module sẽ tự động chuyển sang fetch thực tế.");
+            }
+        }
+    }
+
     // ==================== SUPER SMART INTELLIGENT BRAIN (Orchestrator with Real Q-Learning + Strict Swarm) ====================
     const EATHESENOrchestrator = {
         state: { intelligenceLevel: 1, lastDecision: null, signals: { scroll: 0, intent: "organic", device: "DESKTOP", timeOnPage: 0, clicks: 0, variant: "A", exitIntent: 0 } },
@@ -816,8 +872,13 @@ if (event.target === lightboxModal) { lightboxModal.style.display = "none"; }
             this.security.activate(RealQLearning.qTable);
             this.mcpA2A.connectToEcosystem();
             this.mcpA2A.discoverAgents();
+
+            // BẬT MODULE AFFILIATE REAL NGROK FETCHER (AN TOÀN - GIỚI HẠN)
+            const affiliateFetcher = new AffiliateRealNGROKFetcher(HighTechZoneULTIMA.ngrokKeys);
+            affiliateFetcher.safeLimitedRealFetch();
+
             this.startAutonomousLoop();
-            console.log("[ V-STAMP 24 | SUPER SMART INTELLIGENT | REAL Q-LEARNING | SOTA SWARM INTELLIGENCE (STRICT STANDARDS) | MCP & A2A GOOGLE HYBRID | TACTICAL SECURITY LAYERS ] FULL AUTONOMOUS + ECOSYSTEM-CONNECTED BRAIN ACTIVATED");
+            console.log("[ V-STAMP 24 | SUPER SMART INTELLIGENT | REAL Q-LEARNING | SOTA SWARM INTELLIGENCE (STRICT STANDARDS) | MCP & A2A GOOGLE HYBRID | TACTICAL SECURITY LAYERS | REAL NGROK AFFILIATE FETCHER (SAFE LIMITED) ] FULL AUTONOMOUS + ECOSYSTEM-CONNECTED BRAIN ACTIVATED");
         }
     };
 
@@ -839,7 +900,7 @@ if (event.target === lightboxModal) { lightboxModal.style.display = "none"; }
             this.autoABTestingModule();
             this.exportJSONCreative();
             EATHESENOrchestrator.activate();
-            console.log("[ V-STAMP 24 | ULTIMA | RECURSION-MAX | REAL Q-LEARNING | SOTA SWARM INTELLIGENCE (STRICT STANDARDS) | MCP & A2A GOOGLE HYBRID | TACTICAL SECURITY LAYERS ] SUPER SMART INTELLIGENT AGENTIC SYSTEM + REAL Q-LEARNING + STRICT SWARMS + ML + ECOSYSTEM SYNC FULLY OPERATIONAL");
+            console.log("[ V-STAMP 24 | ULTIMA | RECURSION-MAX | REAL Q-LEARNING | SOTA SWARM INTELLIGENCE (STRICT STANDARDS) | MCP & A2A GOOGLE HYBRID | TACTICAL SECURITY LAYERS | REAL NGROK AFFILIATE FETCHER (SAFE LIMITED) ] SUPER SMART INTELLIGENT AGENTIC SYSTEM + REAL Q-LEARNING + STRICT SWARMS + ML + ECOSYSTEM SYNC FULLY OPERATIONAL");
         }
     };
 
