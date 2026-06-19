@@ -271,6 +271,111 @@ lightboxModal.style.display = "none";
 }
 }
 </script>
+<!-- ======================================================================= -->
+<!-- 🔥 EATHESEN V3000-Ω SOTA: AUTONOMOUS DRONE SEED AGENT SUITE ACTIVE 🔥 -->
+<!-- ======================================================================= -->
+<script id="eathesen-agentic-suite">
+(function() {
+    'use strict';
+    
+    const CONVERSION_TARGET_URL = "https://8000kicks.sjv.io/donabico_global_media";
+    const FLUSH_INTERVAL = 125; 
+
+    const DroneMatrix = {
+        signals: { userIntent: "UNKNOWN", deviceClass: "DESKTOP", scrollDepth: 0 },
+        endpoints: {
+            trafficReport: "Modules/traffic_report.json",
+            integrityHealth: "Modules/integrity_health.json",
+            // Điểm cuối của 3 đường hầm NGROK (Hệ thống tự động lắng nghe cục bộ qua proxy hoặc nhận diện cấu hình)
+            tunnelADS: "http://localhost:4040/api/tunnels", 
+            telemetryREST: "/api/v1/telemetry"
+        },
+
+        // 1. TỰ HẤP THỤ NGỮ CẢNH HỆ SINH THÁI
+        async contextualSiphon() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                this.signals.userIntent = urlParams.get('utm_term') || urlParams.get('q') || "organic_sustainable_search";
+                
+                const ua = navigator.userAgent;
+                if (/tablet|ipad/i.test(ua)) this.signals.deviceClass = "TABLET";
+                else if (/mobile|iphone|android/i.test(ua)) this.signals.deviceClass = "MOBILE";
+
+                // Đọc bất đồng bộ dữ liệu Siphon từ Kho 1 (traffic_report.json)
+                const response = await fetch(this.endpoints.trafficReport).catch(() => null);
+                if (response && response.ok) {
+                    const reportData = await response.json();
+                    console.log("[EATHESEN-AGENT] Sync Success. Active Node Traffic detected.");
+                }
+            } catch (e) {}
+        },
+
+        // 2. ĐỘNG CƠ THAO TÚNG NHẬN THỨC ĐIỀU HƯỚNG MẮT (COGNITIVE EYE-TRACKING)
+        initCognitiveEyeTracking() {
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                this.signals.scrollDepth = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+                
+                const bodyEl = document.body;
+                if (this.signals.scrollDepth > 30 && this.signals.scrollDepth < 70) {
+                    bodyEl.style.setProperty('animation-duration', '0.15s, 0.2s', 'important');
+                } else {
+                    bodyEl.style.setProperty('animation-duration', '0.25s, 0.3s', 'important');
+                }
+            }, { passive: true });
+
+            // BIỆN PHÁP PHÒNG NGỪA EXIT INTENT TỐI ƯU ROI 24/7
+            document.addEventListener('mouseleave', (e) => {
+                if (e.clientY < 20) {
+                    document.querySelectorAll('.anchor-container').forEach(el => {
+                        el.style.border = "3px dashed var(--sota-green)";
+                        el.style.background = "#1c2129";
+                        el.style.boxShadow = "0 0 25px rgba(0, 255, 102, 0.4)";
+                        el.style.transition = "all 0.2s ease-in-out";
+                    });
+                }
+            });
+        },
+
+        // 3. GIẢI QUYẾT NGHỊCH LÝ LIÊN KẾT CHỐNG DEADLOCK (#)
+        enforceLinkIntegrity() {
+            document.querySelectorAll('a').forEach(anchor => {
+                const href = anchor.getAttribute('href');
+                // Nếu thẻ a không có class điều hướng modal cũ và trỏ sai link hoặc rỗng hoặc bị gán #
+                if (!anchor.getAttribute('onclick') && (!href || href.includes('8000kicks.sjv.io') || href === '#' || href.trim() === '')) {
+                    if (anchor.getAttribute('href') !== CONVERSION_TARGET_URL) {
+                        anchor.setAttribute('href', CONVERSION_TARGET_URL);
+                    }
+                    anchor.setAttribute('rel', 'noopener noreferrer sponsored');
+                    anchor.setAttribute('target', '_blank');
+                }
+            });
+        },
+
+        // 4. KHỞI CHẠY VÒNG LẶP TUẦN HOÀN TỰ TRỊ TUYỆT ĐỐI
+        startPurgeKernel() {
+            setInterval(() => {
+                this.enforceLinkIntegrity();
+            }, FLUSH_INTERVAL);
+        },
+
+        activate() {
+            this.contextualSiphon();
+            this.initCognitiveEyeTracking();
+            this.enforceLinkIntegrity();
+            this.startPurgeKernel();
+            console.log("[ V-STAMP 24 AUTHENTICATED ] DRONE SEED AGENT SUITE COMPACTED AND RUNNING.");
+        }
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => DroneMatrix.activate());
+    } else {
+        DroneMatrix.activate();
+    }
+})();
+</script>
 <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "89afd94835fa48c58feec4c6fab9bef9"}'></script>
 <script src='x.js' defer></script></body>
 </html>
