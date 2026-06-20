@@ -22,13 +22,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository (with token)
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.FINE_GRAINED_TOKEN }}   # ← QUAN TRỌNG
           fetch-depth: 0
 
-      - name: Reset to latest remote main (fix non-fast-forward)
+      - name: Reset to latest remote main
         run: |
           git fetch origin main
           git reset --hard origin/main
@@ -47,11 +46,11 @@ jobs:
         env:
           TARGET_URL: ${{ github.event.inputs.target_url || 'https://donabico-global-media.github.io/8000kicks/' }}
         run: |
-          echo "=== EATHESEN V3000-Ω MASTER MATRIX INJECTOR + GOLDEN 2PX ==="
+          echo "=== EATHESEN V3000-Ω MASTER MATRIX INJECTOR + GOLDEN 2PX DRONE SHIELD ==="
           cd Modules
           python Active-Modules.py --url "$TARGET_URL"
 
-      - name: Commit & Push (Safe with force-with-lease)
+      - name: Commit & Push (Safe - No Token)
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -62,6 +61,6 @@ jobs:
             echo "[V3000-INFO] No changes to commit."
           else
             git commit -m "feat(adtech): V3000 Matrix + Golden 2px Drone Shield Activated [skip ci]"
-            git push --force-with-lease origin main
-            echo "[V3000-SUCCESS] Pushed successfully with force-with-lease."
+            git push origin main
+            echo "[V3000-SUCCESS] Pushed successfully."
           fi
