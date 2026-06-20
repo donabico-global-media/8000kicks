@@ -92,6 +92,10 @@ def inject_production_html(results, protocol_groups, target_kho=""):
     with open(index_path, "r", encoding="utf-8") as f:
         html = f.read()
 
+    # DỌN SẠCH HOÀN TOÀN TẤT CẢ BANNER CŨ (triệt để)
+    html = re.sub(r'<div id="dnbc-adtech-banner".*?</div>', '', html, flags=re.DOTALL | re.IGNORECASE)
+    html = re.sub(r'<div id="eath esen-matrix-summary".*?</div>', '', html, flags=re.DOTALL | re.IGNORECASE)
+
     # Golden 2px Drone Shield
     golden_style = """
     <style>
@@ -106,7 +110,7 @@ def inject_production_html(results, protocol_groups, target_kho=""):
     if "<head>" in html:
         html = html.replace("<head>", f"<head>\n{golden_style}")
 
-    # Summary Banner
+    # Banner mới (chỉ 1 cái)
     current_time = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
     total_protocols = sum(len(v) for v in protocol_groups.values())
     summary = f"""
@@ -124,7 +128,7 @@ def inject_production_html(results, protocol_groups, target_kho=""):
 
     with open(index_path, "w", encoding="utf-8") as f:
         f.write(html)
-    print("[SUCCESS] Golden 2px + Protocol Summary injected into index.html!")
+    print("[SUCCESS] Golden 2px + Protocol Summary injected into index.html (old banners cleaned)!")
 
 if __name__ == "__main__":
     target_url = "https://donabico-global-media.github.io/8000kicks/"
