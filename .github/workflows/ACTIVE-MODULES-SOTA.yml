@@ -1,4 +1,4 @@
-name: "ACTIVE-MODULES-SOTA (Multi-Brand Scale Ready)"
+name: "ACTIVE-MODULES-SOTA"
 
 on:
   schedule:
@@ -13,10 +13,6 @@ on:
         description: 'URL Landing Page của Kho đó'
         required: false
         default: 'https://donabico-global-media.github.io/8000kicks/'
-      run_mode:
-        description: 'single hoặc matrix (cho batch nhiều brand)'
-        required: false
-        default: 'single'
 
 concurrency:
   group: active-modules-${{ github.event.inputs.target_kho || github.repository }}
@@ -36,7 +32,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
-      - name: Reset to latest remote main (Safe Scale)
+      - name: Reset to latest remote main
         run: |
           git fetch origin main
           git reset --hard origin/main
@@ -60,7 +56,7 @@ jobs:
           cd Modules
           python Active-Modules.py --url "$TARGET_URL" --kho "$TARGET_KHO"
 
-      - name: Commit & Push (Safe for Scale)
+      - name: Commit & Push (Safe)
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
