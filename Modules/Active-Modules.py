@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-EATHESEN V3000-Ω | AUTONOMOUS MATRIX INJECTOR v2 (Hàng trăm module + Grouped Output + Real Injection)
+EATHESEN V3000-Ω | AUTONOMOUS MATRIX INJECTOR v2 (Multi-Brand Scale Ready)
+Hỗ trợ hàng ngàn Kho Thương Hiệu Affiliate
 """
 import os
 import re
 import sys
+import getopt
 import concurrent.futures
 from datetime import datetime, timezone
 from collections import defaultdict
@@ -38,8 +40,8 @@ def execute_single_module(module_file, target_url):
     except Exception as e:
         return f"💥 {module_file} -> {str(e)}", []
 
-def run_massive_siphon_matrix(target_url):
-    print("[V3000-Ω] === EATHESEN MATRIX ACTIVATION (HÀNG TRĂM MODULE) ===")
+def run_massive_siphon_matrix(target_url, target_kho=""):
+    print(f"[V3000-Ω] === EATHESEN MATRIX ACTIVATION FOR: {target_kho or 'Default'} ===")
     all_files = os.listdir(".")
     module_targets = [f for f in all_files if f.endswith(".py") and f != "Active-Modules.py"]
     
@@ -57,7 +59,7 @@ def run_massive_siphon_matrix(target_url):
                 print(status)
                 for p in protocols:
                     print(f"   ✅ {p}")
-                    # Gom nhóm theo từ khóa
+                    # Gom nhóm
                     if "Google" in p:
                         protocol_groups["Google"].append(p)
                     elif any(x in p for x in ["Bing", "Microsoft"]):
@@ -79,7 +81,7 @@ def run_massive_siphon_matrix(target_url):
 
     return results, protocol_groups
 
-def inject_production_html(results, protocol_groups):
+def inject_production_html(results, protocol_groups, target_kho=""):
     index_path = os.path.join("..", "index.html")
     if not os.path.exists(index_path):
         index_path = "index.html"
@@ -104,13 +106,15 @@ def inject_production_html(results, protocol_groups):
     if "<head>" in html:
         html = html.replace("<head>", f"<head>\n{golden_style}")
 
-    # Inject summary section
+    # Summary Banner
     current_time = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC')
+    total_protocols = sum(len(v) for v in protocol_groups.values())
     summary = f"""
     <div id="eath esen-matrix-summary" style="background:#111; color:#0f0; padding:15px; margin:20px 0; border:1px solid #0f0; font-family:monospace;">
         <strong>🛡️ EATHESEN V3000-Ω MATRIX ACTIVATED</strong><br>
+        Brand/Kho: {target_kho or 'Default'}<br>
         Time: {current_time}<br>
-        Total Protocols Activated: {sum(len(v) for v in protocol_groups.values())}<br>
+        Total Protocols Activated: {total_protocols}<br>
         Groups: {', '.join(protocol_groups.keys())}<br>
         <span style="color:#FFD700">Golden Drone Shield: ACTIVE</span>
     </div>
@@ -123,11 +127,18 @@ def inject_production_html(results, protocol_groups):
     print("[SUCCESS] Golden 2px + Protocol Summary injected into index.html!")
 
 if __name__ == "__main__":
-    target = "https://donabico-global-media.github.io/8000kicks/"
-    if "--url" in sys.argv:
-        idx = sys.argv.index("--url")
-        if idx + 1 < len(sys.argv):
-            target = sys.argv[idx + 1]
+    target_url = "https://donabico-global-media.github.io/8000kicks/"
+    target_kho = ""
+    
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "u:k:", ["url=", "kho="])
+        for opt, arg in opts:
+            if opt in ("-u", "--url"):
+                target_url = arg
+            elif opt in ("-k", "--kho"):
+                target_kho = arg
+    except getopt.GetoptError:
+        pass
 
-    results, protocol_groups = run_massive_siphon_matrix(target)
-    inject_production_html(results, protocol_groups)
+    results, protocol_groups = run_massive_siphon_matrix(target_url, target_kho)
+    inject_production_html(results, protocol_groups, target_kho)
