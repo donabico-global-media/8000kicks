@@ -47,7 +47,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install httpx pydantic pyngrok
 
-      - name: Run EATHESEN V3000-Ω Matrix + Golden 2px Drone Shield + SEO + NGROK
+      - name: Run All Modules in Folder (Tự động Vô Hạn)
         env:
           TARGET_URL: ${{ github.event.inputs.target_url }}
           TARGET_KHO: ${{ github.event.inputs.target_kho }}
@@ -55,9 +55,10 @@ jobs:
         run: |
           echo "=== EATHESEN V3000-Ω MATRIX FOR BRAND: $TARGET_KHO ==="
           cd Modules
-          python Active-Modules.py --url "$TARGET_URL" --kho "$TARGET_KHO"
-          python SEO-Shield-Siphon.py
-          python Google-Siphon.py
+          for script in *.py; do
+            echo "Running $script..."
+            python "$script" --url "$TARGET_URL" --kho "$TARGET_KHO" || echo "Skipped $script"
+          done
           # NGROK Tunnel
           pyngrok config add-authtoken $NGROK_AUTHTOKEN
           python Traffic-Siphon.py
@@ -67,12 +68,12 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          git add index.html Modules/traffic_report.json || true
+          git add index.html Modules/*.json || true
           
           if git diff --cached --quiet; then
             echo "[V3000-INFO] No changes to commit for $TARGET_KHO."
           else
-            git commit -m "feat(adtech): V3000 Matrix + Golden 2px + SEO + NGROK for ${{ github.event.inputs.target_kho }} [skip ci]"
+            git commit -m "feat(adtech): V3000 Matrix + Golden 2px + All Modules for ${{ github.event.inputs.target_kho }} [skip ci]"
             git push origin main
             echo "[V3000-SUCCESS] Pushed successfully for $TARGET_KHO."
           fi
