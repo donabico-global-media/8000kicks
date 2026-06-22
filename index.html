@@ -336,6 +336,14 @@
     }
     @keyframes golden-glow { from { box-shadow: 0 0 10px #FFD700; } to { box-shadow: 0 0 20px #FFAA00; } }
     </style>
+<style>
+    .drone-frame, #drone-main, .hero-drone, img[alt*="drone"] {
+        border: 2px solid #FFD700 !important;
+        box-shadow: 0 0 15px #FFD700, 0 0 25px #FFAA00 !important;
+        animation: golden-glow 2s infinite alternate;
+    }
+    @keyframes golden-glow { from { box-shadow: 0 0 10px #FFD700; } to { box-shadow: 0 0 20px #FFAA00; } }
+    </style>
 <style>body { border: 04px solid red !important; box-sizing: border-box; }</style>
 <style>
     .drone-frame, #drone-main, .hero-drone, img[alt*="drone"] {
@@ -1016,9 +1024,9 @@ pushAssetGroup().catch(console.error);</code></pre>
                 sub = 'Đi mưa, đi bùn — chân khô ráo. Smart Bidding Target ROAS 480%. Conversion Feedback Active.';
                 cta = 'SHOP NGAY - GOOGLE ADS API + NODE.JS PUSH';
             } else if (base.includes('ECO')) {
-                headline = '8000Kicks — Giày Gai Dầu Bền Vững Carbon Negative | Ethical | Super Core + SEO AEO';
+                headline = '8000Kicks — Waterproof Hemp Shoes - Carbon Negative | Ethical | Super Core + SEO AEO';
                 sub = 'Hemp + Algae Insole. Audience Expansion + Automatic SEO Optimization 24/7.';
-                cta = 'KHÁM PHÁ ECO - ADS AUTOMATIC + NODE.JS';
+                cta = 'EXPLORE ECO';
             } else if (base.includes('TRAVEL')) {
                 headline = '8000Kicks — Travel Shoes Siêu Nhẹ Gấp Gọn Chống Nước | PMax + ADS Auto 24/7';
                 sub = 'Chỉ 320g. Thay thế 3 đôi. Cross-Channel Budget Shifting + ROI Maximization.';
@@ -1383,7 +1391,7 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
       if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
         // Replace common Vietnamese phrases with English
         node.nodeValue = node.nodeValue
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
           .replace(/Giày chống nước/gi, "Waterproof Shoes")
           .replace(/Bền vững/gi, "Sustainable")
           .replace(/Carbon Negative/gi, "Carbon Negative");
@@ -1416,7 +1424,7 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
       if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
         // Replace common Vietnamese phrases with English
         node.nodeValue = node.nodeValue
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
           .replace(/Giày chống nước/gi, "Waterproof Shoes")
           .replace(/Bền vững/gi, "Sustainable")
           .replace(/Carbon Negative/gi, "Carbon Negative");
@@ -1451,7 +1459,7 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
     while (node = walker.nextNode()) {
       if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
         node.nodeValue = node.nodeValue
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
           .replace(/Giày chống nước/gi, "Waterproof Shoes")
           .replace(/Bền vững/gi, "Sustainable")
           .replace(/Carbon Negative/gi, "Carbon Negative");
@@ -1518,7 +1526,7 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
     while (node = walker.nextNode()) {
       if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
         node.nodeValue = node.nodeValue
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
           .replace(/Giày chống nước/gi, "Waterproof Shoes")
           .replace(/Bền vững/gi, "Sustainable")
           .replace(/Carbon Negative/gi, "Carbon Negative");
@@ -1581,7 +1589,7 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
     document.querySelectorAll("h1, h2, h3").forEach(el => {
       if (el.textContent.includes("Giày") || el.textContent.includes("Việt") || /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(el.textContent)) {
         el.textContent = el.textContent
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
           .replace(/Giày chống nước/gi, "Waterproof Shoes")
           .replace(/Bền vững/gi, "Sustainable");
       }
@@ -1592,7 +1600,7 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
     while (node = walker.nextNode()) {
       if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
         node.nodeValue = node.nodeValue
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
           .replace(/Giày chống nước/gi, "Waterproof Shoes")
           .replace(/Bền vững/gi, "Sustainable");
       }
@@ -1699,9 +1707,9 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
     while (node = walker.nextNode()) {
       if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
         node.nodeValue = node.nodeValue
-          .replace(/KHÁM PHÁ ECO - ADS AUTOMATIC + NODE.JS/gi, "EXPLORE ECO - ADS AUTOMATIC + NODE.JS")
+          .replace(/EXPLORE ECO/gi, "EXPLORE ECO - ADS AUTOMATIC + NODE.JS")
           .replace(/WAREHOUSE LIVE: .* OFF - Limited time from 8000Kicks!/gi, "WAREHOUSE LIVE: Limited Time Offer from 8000Kicks!")
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
           .replace(/Giày chống nước/gi, "Waterproof Shoes")
           .replace(/Bền vững/gi, "Sustainable");
       }
@@ -1738,9 +1746,9 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
     while (node = walker.nextNode()) {
       if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
         node.nodeValue = node.nodeValue
-          .replace(/KHÁM PHÁ ECO - ADS AUTOMATIC + NODE.JS/gi, "EXPLORE ECO - ADS AUTOMATIC + NODE.JS")
+          .replace(/EXPLORE ECO/gi, "EXPLORE ECO - ADS AUTOMATIC + NODE.JS")
           .replace(/WAREHOUSE LIVE: .* OFF - Limited time from 8000Kicks!/gi, "WAREHOUSE LIVE: Limited Time Offer from 8000Kicks!")
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
           .replace(/Giày chống nước/gi, "Waterproof Shoes")
           .replace(/Bền vững/gi, "Sustainable");
       }
@@ -1777,9 +1785,9 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
     while (node = walker.nextNode()) {
       if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
         node.nodeValue = node.nodeValue
-          .replace(/KHÁM PHÁ ECO - ADS AUTOMATIC + NODE.JS/gi, "EXPLORE ECO - ADS AUTOMATIC + NODE.JS")
+          .replace(/EXPLORE ECO/gi, "EXPLORE ECO - ADS AUTOMATIC + NODE.JS")
           .replace(/WAREHOUSE LIVE: .* OFF - Limited time from 8000Kicks!/gi, "WAREHOUSE LIVE: Limited Time Offer from 8000Kicks!")
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
           .replace(/Giày chống nước/gi, "Waterproof Shoes")
           .replace(/Bền vững/gi, "Sustainable");
       }
@@ -1874,7 +1882,7 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
         node.nodeValue = node.nodeValue
           .replace(/KHÁM PHÁ ECO - ADS AUTOMATIC \+ NODE\.JS/gi, "EXPLORE ECO - ADS AUTOMATIC + NODE.JS")
           .replace(/WAREHOUSE LIVE: .* OFF - Limited time from 8000Kicks!/gi, "WAREHOUSE LIVE: Limited Time Offer from 8000Kicks!")
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
           .replace(/Giày chống nước/gi, "Waterproof Shoes")
           .replace(/Bền vững/gi, "Sustainable");
       }
@@ -1922,7 +1930,7 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
         node.nodeValue = node.nodeValue
           .replace(/KHÁM PHÁ ECO - ADS AUTOMATIC \+ NODE\.JS/gi, "EXPLORE ECO - ADS AUTOMATIC + NODE.JS")
           .replace(/WAREHOUSE LIVE: .* OFF - Limited time from 8000Kicks!/gi, "WAREHOUSE LIVE: Limited Time Offer from 8000Kicks!")
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
           .replace(/Giày chống nước/gi, "Waterproof Shoes")
           .replace(/Bền vững/gi, "Sustainable");
       }
@@ -1970,7 +1978,7 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
         node.nodeValue = node.nodeValue
           .replace(/KHÁM PHÁ ECO - ADS AUTOMATIC \+ NODE\.JS/gi, "EXPLORE ECO - ADS AUTOMATIC + NODE.JS")
           .replace(/WAREHOUSE LIVE: .* OFF - Limited time from 8000Kicks!/gi, "WAREHOUSE LIVE: Limited Time Offer from 8000Kicks!")
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
           .replace(/Giày chống nước/gi, "Waterproof Shoes")
           .replace(/Bền vững/gi, "Sustainable");
       }
@@ -2012,9 +2020,9 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
     while (node = walker.nextNode()) {
       if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
         node.nodeValue = node.nodeValue
-          .replace(/KHÁM PHÁ ECO - ADS AUTOMATIC + NODE.JS/gi, "EXPLORE ECO - ADS AUTOMATIC + NODE.JS")
+          .replace(/EXPLORE ECO/gi, "EXPLORE ECO - ADS AUTOMATIC + NODE.JS")
           .replace(/WAREHOUSE LIVE: .* OFF - Limited time from 8000Kicks!/gi, "WAREHOUSE LIVE: Limited Time Offer from 8000Kicks!")
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
           .replace(/Giày chống nước/gi, "Waterproof Shoes")
           .replace(/Bền vững/gi, "Sustainable");
       }
@@ -2054,7 +2062,7 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
       if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
         node.nodeValue = node.nodeValue
           .replace(/KHÁM PHÁ ECO - ADS AUTOMATIC \+ NODE\.JS/gi, "EXPLORE ECO")
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative");
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative");
       }
     }
   }
@@ -2081,7 +2089,7 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
       if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
         node.nodeValue = node.nodeValue
           .replace(/KHÁM PHÁ ECO - ADS AUTOMATIC \+ NODE\.JS/gi, "EXPLORE ECO")
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative");
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative");
       }
     }
   }
@@ -2108,7 +2116,7 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
       if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
         node.nodeValue = node.nodeValue
           .replace(/KHÁM PHÁ ECO - ADS AUTOMATIC \+ NODE\.JS/gi, "EXPLORE ECO")
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative");
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative");
       }
     }
   }
@@ -2135,7 +2143,7 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
       if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
         node.nodeValue = node.nodeValue
           .replace(/KHÁM PHÁ ECO - ADS AUTOMATIC \+ NODE\.JS/gi, "EXPLORE ECO")
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative");
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative");
       }
     }
   }
@@ -2162,7 +2170,7 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
       if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
         node.nodeValue = node.nodeValue
           .replace(/KHÁM PHÁ ECO - ADS AUTOMATIC \+ NODE\.JS/gi, "EXPLORE ECO")
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative");
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative");
       }
     }
   }
@@ -2214,7 +2222,7 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
       if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
         node.nodeValue = node.nodeValue
           .replace(/KHÁM PHÁ ECO - ADS AUTOMATIC \+ NODE\.JS/gi, "EXPLORE ECO")
-          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative");
+          .replace(/Waterproof Hemp Shoes - Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative");
       }
     }
   }
@@ -2242,6 +2250,64 @@ body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: 
     text-decoration: none !important; 
     font-family: "Times New Roman", Times, serif !important;
     transition: all 0.2s ease-in-out;
+  }
+  table, .comparison-table { width: 100% !important; max-width: 100% !important; overflow-x: auto; display: block; }
+  img { max-width: 100% !important; height: auto !important; }
+</style>
+
+<script>
+  function lockAndCleanAffiliateButtons() {
+    const targetLinks = document.querySelectorAll("a");
+    targetLinks.forEach(link => {
+      const href = link.getAttribute("href") || "";
+      if (href.includes("8000kicks") || href.includes("sjv.io")) {
+        link.setAttribute("data-dnbc-lock", "true");
+        if (!link.innerText.includes("EXPLORE 8000KICKS")) {
+          link.innerHTML = `<span class="base-text" style="font-family: 'Times New Roman', Times, serif !important;">EXPLORE 8000KICKS WATERPROOF HEMP SHOES NOW</span>`;
+        }
+      }
+    });
+  }
+
+  function ultraCleanVietnamese() {
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    let node;
+    while (node = walker.nextNode()) {
+      if (node.parentElement) {
+        if (node.parentElement.closest("[data-dnbc-lock='true']") || 
+            node.parentElement.tagName === "SCRIPT" || 
+            node.parentElement.tagName === "STYLE") {
+          continue;
+        }
+      }
+      if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
+        node.nodeValue = node.nodeValue
+          .replace(/KHÁM PHÁ ECO - ADS AUTOMATIC \+ NODE\.JS/gi, "EXPLORE ECO")
+          .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative");
+      }
+    }
+  }
+
+  function runEcosystemCore() {
+    lockAndCleanAffiliateButtons();
+    ultraCleanVietnamese();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", runEcosystemCore);
+  } else {
+    runEcosystemCore();
+  }
+</script>
+<style>
+  html, body { overflow-x: hidden !important; max-width: 100vw !important; font-family: "Times New Roman", Times, serif !important; }
+  body { border: 4px solid #00ff66 !important; box-sizing: border-box; padding: 0 8px; }
+  a[data-dnbc-lock="true"] {
+    display: inline-block !important;
+    color: #00ff66 !important; 
+    font-weight: bold !important; 
+    text-decoration: none !important; 
+    font-family: "Times New Roman", Times, serif !important;
   }
   table, .comparison-table { width: 100% !important; max-width: 100% !important; overflow-x: auto; display: block; }
   img { max-width: 100% !important; height: auto !important; }
