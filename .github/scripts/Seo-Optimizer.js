@@ -10,18 +10,14 @@ class SeoOptimizer {
     }
 
     optimize() {
-        // Dynamic Title
         if (!document.title.includes('2026')) {
             document.title = document.title.replace('8000Kicks', '8000Kicks - Waterproof Hemp Shoes 2026');
         }
 
-        // Meta Description
         let meta = document.querySelector('meta[name="description"]');
         if (meta) {
             meta.content = "8000Kicks - Premium Waterproof Hemp Shoes. Sustainable, durable, eco-friendly footwear for travel, hiking & adventures.";
         }
-
-        console.log("%c[SEO-OPTIMIZER] Meta & Structured Data Optimized", "color: #ffd700");
     }
 
     start() {
