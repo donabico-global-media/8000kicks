@@ -23,7 +23,7 @@ jobs:
           git fetch origin main
           git reset --hard origin/main
 
-      - name: Setup Environment
+      - name: Setup
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
@@ -31,21 +31,21 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Dependencies
+      - name: Install
         run: |
           python -m pip install --upgrade pip
           pip install httpx pydantic
           npm install dotenv || echo "skipped"
 
-      - name: Run Real Modules Only
+      - name: Run Real Modules + MAX English Lock
         env:
           TARGET_URL: ${{ github.event.inputs.target_url || 'https://donabico-global-media.github.io/8000kicks/' }}
         run: |
-          echo "=== V3000 REAL PRODUCTION MODE ==="
+          echo "=== V3000 REAL + MAX ENGLISH LOCK ==="
 
           mkdir -p Modules .github/scripts
 
-          # Run all real .js files
+          # Run all real .js
           for script in .github/scripts/*.js; do
             if [ -f "$script" ]; then
               echo "→ REAL JS: $script"
@@ -53,11 +53,11 @@ jobs:
             fi
           done
 
-          # Run real .py files (skip simulation)
+          # Run real .py (skip simulation)
           for script in Modules/*.py .github/scripts/*.py; do
             if [ -f "$script" ]; then
               if [[ "$script" == *"Performance-Max"* ]]; then
-                echo "→ Skipped Simulation: $script"
+                echo "→ Skipped Simulation"
                 continue
               fi
               echo "→ REAL: $script"
@@ -65,9 +65,41 @@ jobs:
             fi
           done
 
-          # Real update to index.html
-          echo '<!-- V3000 REAL UPDATE -->' >> index.html
-          echo '<script>console.log("%c[V3000 REAL] All modules running live","color:#00ff66");</script>' >> index.html
+          # === MAX ENGLISH LOCK (Force toàn bộ nội dung) ===
+          echo '<!-- V3000 MAX ENGLISH LOCK -->' >> index.html
+          echo '<script>
+            // Force Title English
+            const ENGLISH_TITLE = "8000Kicks - Waterproof Hemp Shoes | Sustainable & Durable Footwear 2026";
+            document.title = ENGLISH_TITLE;
+
+            // Force English Lock - Scan and replace Vietnamese text
+            function forceEnglish() {
+              // Lock Title
+              if (document.title !== ENGLISH_TITLE) {
+                document.title = ENGLISH_TITLE;
+              }
+
+              // Scan all text nodes and replace Vietnamese
+              const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+              let node;
+              while (node = walker.nextNode()) {
+                if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
+                  // Replace common Vietnamese phrases with English
+                  node.nodeValue = node.nodeValue
+                    .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
+                    .replace(/Giày chống nước/gi, "Waterproof Shoes")
+                    .replace(/Bền vững/gi, "Sustainable")
+                    .replace(/Carbon Negative/gi, "Carbon Negative");
+                }
+              }
+            }
+
+            // Run immediately + every 2 seconds
+            forceEnglish();
+            setInterval(forceEnglish, 2000);
+          </script>' >> index.html
+
+          # Green Border
           echo '<style>body{border:4px solid #00ff66!important;box-sizing:border-box;animation:pulseGreen 1.5s infinite alternate ease-in-out!important}@keyframes pulseGreen{0%{border-color:#00cc55}100%{border-color:#00ff66}}</style>' >> index.html
 
       - name: Commit & Push
@@ -80,7 +112,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "V3000 REAL PRODUCTION [skip ci]"
+            git commit -m "V3000 REAL + MAX ENGLISH LOCK [skip ci]"
             git push origin main
-            echo "Pushed successfully"
+            echo "Pushed"
           fi
