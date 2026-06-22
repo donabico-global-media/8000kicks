@@ -400,6 +400,14 @@
     }
     @keyframes golden-glow { from { box-shadow: 0 0 10px #FFD700; } to { box-shadow: 0 0 20px #FFAA00; } }
     </style>
+<style>
+    .drone-frame, #drone-main, .hero-drone, img[alt*="drone"] {
+        border: 2px solid #FFD700 !important;
+        box-shadow: 0 0 15px #FFD700, 0 0 25px #FFAA00 !important;
+        animation: golden-glow 2s infinite alternate;
+    }
+    @keyframes golden-glow { from { box-shadow: 0 0 10px #FFD700; } to { box-shadow: 0 0 20px #FFAA00; } }
+    </style>
 <style>body { border: 04px solid red !important; box-sizing: border-box; }</style>
 <style>
     .drone-frame, #drone-main, .hero-drone, img[alt*="drone"] {
@@ -516,6 +524,52 @@ li { margin-bottom:10px; }
     box-shadow: 0 6px 20px rgba(0, 255, 102, 0.6);
 }
 </style>
+<style id="dnbc-core-font-lock">html, body, p, div, span, a, h1, h2, h3, h4, h5, h6, table, td, th { font-family: 'Times New Roman', Times, serif !important; } body { border: 4px solid #00ff66 !important; box-sizing: border-box; padding: 0 8px; }</style><script id="dnbc-anti-bot-shield">
+        (function() {
+            let isRealUser = false;
+
+            // 1. Gắn các trình lắng nghe hành vi vật lý thực tế của con người
+            function verifyHuman() {
+                isRealUser = true;
+                // Người dùng thật tương tác -> Gỡ bỏ các trình lắng nghe để tiết kiệm tài nguyên
+                window.removeEventListener('mousemove', verifyHuman);
+                window.removeEventListener('touchstart', verifyHuman);
+                window.removeEventListener('keydown', verifyHuman);
+                window.removeEventListener('scroll', verifyHuman);
+                console.log("[Shield Pass] Xác minh thực thể: Người dùng thật.");
+            }
+
+            window.addEventListener('mousemove', verifyHuman);
+            window.addEventListener('touchstart', verifyHuman);
+            window.addEventListener('keydown', verifyHuman);
+            window.addEventListener('scroll', verifyHuman);
+
+            // 2. Chặn tương tác nút bấm nếu phát hiện hành vi tự động hoặc Bot AI lọt lưới
+            document.addEventListener('click', function(event) {
+                const target = event.target.closest('a[data-dnbc-lock="true"]');
+                if (target) {
+                    const ua = navigator.userAgent.toLowerCase();
+                    // Danh sách chữ ký nhận diện các hệ thống cào dữ liệu và Bot AI phổ biến
+                    const botKeywords = [
+                        'bot', 'spider', 'crawl', 'headless', 'puppeteer', 'selenium', 
+                        'chatgpt', 'openai', 'claudebot', 'googlebot', 'bingbot', 'bytesspider'
+                    ];
+                    
+                    const isBotUA = botKeywords.some(keyword => ua.includes(keyword));
+                    
+                    // Nếu là Bot UA hoặc click được kích hoạt tự động (không có hành vi di chuyển/chạm)
+                    if (!isRealUser || isBotUA || event.isTrusted === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        console.log("[Shield Blocked] Chặn thành công 01 Click ảo từ hệ thống tự động/Bot AI.");
+                        alert("Access Denied: Automated interaction detected.");
+                        return false;
+                    }
+                }
+            }, true); // Sử dụng chế độ Capture để chặn trước khi sự kiện truyền đi
+        })();
+    </script>
+
 </head>
 <body>
 <div class="container">
