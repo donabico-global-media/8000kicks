@@ -45,15 +45,11 @@ jobs:
 
           mkdir -p Modules .github/scripts
 
-          # Run all .js files (skip problematic one)
+          # Run all .js files
           for script in .github/scripts/*.js; do
             if [ -f "$script" ]; then
-              if [[ "$script" == *"Push-To-Google-Ads"* ]]; then
-                echo "→ Skipped problematic file: $script"
-                continue
-              fi
               echo "→ REAL JS: $script"
-              node "$script" || echo "Skipped $script"
+              node "$script" || echo "Skipped"
             fi
           done
 
@@ -69,17 +65,57 @@ jobs:
             fi
           done
 
-          # ULTRA CLEAN + GREEN BORDER
-          echo '<!-- ULTRA CLEAN -->' >> index.html
+          # ULTRA CLEAN VIETNAMESE TEXT (Đã sửa lỗi nhảy chữ ở nút chuyển hướng)
+          echo '<!-- ULTRA CLEAN VIETNAMESE TEXT -->' >> index.html
           echo '<script>
-            const TITLE = "8000Kicks - Waterproof Hemp Shoes | Sustainable & Durable Footwear 2026";
-            function lock() {
-              if (document.title !== TITLE) document.title = TITLE;
+            function ultraCleanVietnamese() {
+              const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+              let node;
+              while (node = walker.nextNode()) {
+                // Bảo vệ nút chuyển hướng Link Affiliate bằng cách bỏ qua nếu node nằm trong thẻ gốc chứa link 8000kicks
+                if (node.parentElement && node.parentElement.closest("a[href*=\"8000kicks.sjv.io\"]")) {
+                  continue;
+                }
+                if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
+                  node.nodeValue = node.nodeValue
+                    .replace(/KHÁM PHÁ ECO - ADS AUTOMATIC \+ NODE\.JS/gi, "EXPLORE ECO - ADS AUTOMATIC + NODE.JS")
+                    .replace(/WAREHOUSE LIVE: .* OFF - Limited time from 8000Kicks!/gi, "WAREHOUSE LIVE: Limited Time Offer from 8000Kicks!")
+                    .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
+                    .replace(/Giày chống nước/gi, "Waterproof Shoes")
+                    .replace(/Bền vững/gi, "Sustainable");
+                }
+              }
             }
-            lock();
-            setInterval(lock, 500);
+            // Khởi chạy an toàn khi DOM sẵn sàng và lập lịch tối ưu không gây xung đột nhảy chữ
+            if (document.readyState === "loading") {
+              document.addEventListener("DOMContentLoaded", ultraCleanVietnamese);
+            } else {
+              ultraCleanVietnamese();
+            }
+            setInterval(ultraCleanVietnamese, 2000);
           </script>' >> index.html
-          echo '<style>body{border:4px solid #00ff66!important;box-sizing:border-box;animation:pulseGreen 1.5s infinite alternate ease-in-out!important}@keyframes pulseGreen{0%{border-color:#00cc55}100%{border-color:#00ff66}}</style>' >> index.html
+
+          # Green Border + Responsive
+          echo '<style>
+            html, body { overflow-x: hidden !important; max-width: 100vw !important; }
+            body {
+              border: 4px solid #00ff66 !important;
+              box-sizing: border-box;
+              animation: pulseGreen 1.5s infinite alternate ease-in-out !important;
+              padding: 0 8px;
+            }
+            @keyframes pulseGreen {
+              0% { border-color: #00cc55; }
+              100% { border-color: #00ff66; }
+            }
+            table, .comparison-table {
+              width: 100% !important;
+              max-width: 100% !important;
+              overflow-x: auto;
+              display: block;
+            }
+            img { max-width: 100% !important; height: auto !important; }
+          </style>' >> index.html
 
       - name: Commit & Push
         run: |
@@ -91,7 +127,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "V3000 REAL + LOCK [skip ci]"
+            git commit -m "V3000 REAL + ULTRA CLEAN [skip ci]"
             git push origin main
             echo "Pushed successfully"
           fi
