@@ -1,4 +1,6 @@
 name: "ACTIVE-MODULES-SOTA"
+# Thuộc tính dưới đây sẽ ẩn hoàn toàn đường dẫn file trên giao diện Actions và thay bằng tên đợt chạy sạch sẽ
+run-name: "V3000 REAL PRODUCTION MODE (Run #${{ github.run_number }})"
 
 on:
   schedule:
@@ -44,14 +46,12 @@ jobs:
           echo "=== V3000 REAL PRODUCTION MODE ==="
           mkdir -p Modules .github/scripts
 
-          # Run all .js files
           for script in .github/scripts/*.js; do
             if [ -f "$script" ]; then
               node "$script" || echo "Skipped"
             fi
           done
 
-          # Run all .py files
           for script in Modules/*.py .github/scripts/*.py; do
             if [ -f "$script" ]; then
               if [[ "$script" == *"Performance-Max"* ]]; then
@@ -61,7 +61,7 @@ jobs:
             fi
           done
 
-          # KHẮC PHỤC TẬP TIN PY LÀM LOẠN: Quét dọn mã yml rác bị chèn ở đầu trang & Ép nút về English chuẩn
+          # Python Post-Processor bảo vệ nút chuyển hướng Affiliate
           python -c '
 import os
 import re
@@ -72,13 +72,11 @@ if os.path.exists(file_path):
     with open(file_path, "r", encoding="utf-8") as f:
         raw_content = f.read()
     
-    # Loại bỏ tận gốc chuỗi văn bản cấu hình yml bị chèn nhầm ở đỉnh file trước thẻ <!DOCTYPE html>
     if "name:" in raw_content or "on:" in raw_content:
         raw_content = re.sub(r"^[\s\S]*?(?=(<!DOCTYPE html>|<html))", "", raw_content)
 
     soup = BeautifulSoup(raw_content, "html.parser")
     
-    # Khóa và ép toàn bộ nút Affiliate hướng tới 8000kicks về nội dung thương mại sạch
     links = soup.find_all("a")
     for link in links:
         href = link.get("href", "")
@@ -89,11 +87,10 @@ if os.path.exists(file_path):
 
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(str(soup))
-    print("=== CRITICAL SHIELD: YML Trash Removed & Affiliate Buttons Restored ===")
 '
 
-          # ULTRA CLEAN VIETNAMESE TEXT (Chỉ quét text thường, bỏ qua thẻ <a>)
-          echo '' >> index.html
+          # ULTRA CLEAN VIETNAMESE TEXT
+          echo '<!-- ULTRA CLEAN VIETNAMESE TEXT -->' >> index.html
           echo '<script>
             function ultraCleanVietnamese() {
               const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
@@ -116,7 +113,7 @@ if os.path.exists(file_path):
             }
           </script>' >> index.html
 
-          # Green Border Style Enforced
+          # Green Border Style
           echo '<style>
             html, body { overflow-x: hidden !important; max-width: 100vw !important; font-family: "Times New Roman", Times, serif !important; }
             body { border: 4px solid #00ff66 !important; box-sizing: border-box; padding: 0 8px; }
@@ -124,7 +121,7 @@ if os.path.exists(file_path):
             img { max-width: 100% !important; height: auto !important; }
           </style>' >> index.html
 
-      - name: Commit & Push Verified Build
+      - name: Commit & Push
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -132,6 +129,6 @@ if os.path.exists(file_path):
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "V3000 REAL + AUTOMATIC YML PURGE [skip ci]"
+            git commit -m "V3000 REAL + UI RUN CLEANED [skip ci]"
             git push origin main
           fi
