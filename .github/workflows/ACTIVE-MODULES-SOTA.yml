@@ -1,13 +1,12 @@
 # ╔════════════════════════════════════════════════════════════════════════════╗
-# ║ ACTIVE-MODULES-SOTA.yml (V10 - CLEAN & STABLE)                             ║
-# ║ 24/7 Auto Run All Scripts + Green Border Effect                            ║
+# ║ ACTIVE-MODULES-SOTA.yml (V11 - FIXED YAML SYNTAX)                          ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
 name: "ACTIVE-MODULES-SOTA"
 
 on:
   schedule:
-    - cron: "*/20 * * * *"   # Chạy mỗi 20 phút
+    - cron: "*/20 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -42,7 +41,7 @@ jobs:
           pip install httpx pydantic
           npm install dotenv || echo "skipped"
 
-      - name: Auto Run All Scripts in 2 Folders
+      - name: Auto Run All Scripts + UI Enhancement
         run: |
           echo "=== EATHESEN V3000-Ω 24/7 MATRIX START ==="
 
@@ -64,7 +63,7 @@ jobs:
             fi
           done
 
-          # Add Green Border Effect to index.html
+          # Add Green Border Effect
           cat >> index.html << 'EOF'
 <!-- V3000 UI ENHANCEMENT - GREEN BORDER -->
 <style>
