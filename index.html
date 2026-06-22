@@ -432,6 +432,14 @@
     }
     @keyframes golden-glow { from { box-shadow: 0 0 10px #FFD700; } to { box-shadow: 0 0 20px #FFAA00; } }
     </style>
+<style>
+    .drone-frame, #drone-main, .hero-drone, img[alt*="drone"] {
+        border: 2px solid #FFD700 !important;
+        box-shadow: 0 0 15px #FFD700, 0 0 25px #FFAA00 !important;
+        animation: golden-glow 2s infinite alternate;
+    }
+    @keyframes golden-glow { from { box-shadow: 0 0 10px #FFD700; } to { box-shadow: 0 0 20px #FFAA00; } }
+    </style>
 <style>body { border: 04px solid red !important; box-sizing: border-box; }</style>
 <style>
     .drone-frame, #drone-main, .hero-drone, img[alt*="drone"] {
@@ -594,8 +602,34 @@ li { margin-bottom:10px; }
             }, true); // Sử dụng chế độ Capture để chặn trước khi sự kiện truyền đi
         })();
     </script>
-
-</head>
+<script id="dnbc-global-roi-router">
+        async function activateGlobalRouting() {
+            // Các thị trường trọng điểm có tỷ lệ chuyển đổi ROI Affiliate cao
+            const HIGH_ROI_MARKETS = ['US', 'CA', 'GB', 'AU', 'NZ', 'JP', 'KR', 'SG', 'DE', 'FR', 'IT', 'ES', 'AE', 'SA'];
+            const DEFAULT_AFFILIATE_URL = "https://sjv.io/c/2543547/1110056/14303";
+            
+            try {
+                // Gọi API thực địa công cộng để nhận biết quốc gia
+                const response = await fetch('https://ipapi.co/json/');
+                if (!response.ok) return;
+                const data = await response.json();
+                const userCountry = data.country_code;
+                
+                console.log(`[GeoIP System] User Location: ${data.country_name} (${userCountry})`);
+                
+                // Tự động tối ưu hóa đích đến nếu người dùng thuộc nhóm thị trường cao cấp
+                if (HIGH_ROI_MARKETS.includes(userCountry) || data.currency === 'USD' || data.currency === 'EUR') {
+                    const links = document.querySelectorAll('a[data-dnbc-lock="true"]');
+                    links.forEach(link => {
+                        link.href = DEFAULT_AFFILIATE_URL;
+                    });
+                }
+            } catch (error) {
+                console.log("[-] Routing process bypassed or ad-blocker detected.");
+            }
+        }
+        window.addEventListener('DOMContentLoaded', activateGlobalRouting);
+    </script></head>
 <body>
 <div class="container">
 <h1>8000Kicks - The World's First Waterproof Hemp Shoes</h1>
@@ -610,7 +644,7 @@ li { margin-bottom:10px; }
 <div class="image-box"><img alt="8000Kicks Chelsea Boot - All-Day Comfort" onclick="openLightbox(this)" src="https://www.8000kicks.com/cdn/shop/files/8000Kicks_183_2_375x250_crop_center.jpg?v=1775585254"/></div>
 </div>
 <div class="anchor-container">
-<a class="anchor-link" data-dnbc-lock="true" href="https://8000kicks.sjv.io/donabico_global_media" rel="noopener noreferrer sponsored" style="color: #00ff66; font-weight: bold; text-decoration: none; font-family: 'Times New Roman', Times, serif;" target="_blank">EXPLORE 8000KICKS WATERPROOF HEMP SHOES NOW</a>
+<a class="anchor-link" data-dnbc-lock="true" href="https://8000kicks.sjv.io/donabico_global_media" rel="noopener noreferrer sponsored" style="color: #00ff66; font-weight: bold; text-decoration: none; color: #00ff66; font-weight: bold; text-decoration: none;" target="_blank">EXPLORE 8000KICKS WATERPROOF HEMP SHOES NOW</a>
 </div>
 <!-- GOOGLE ADS API PUSH BUTTON REMOVED - NO STRUCTURAL ERROR -->
 <h2>Performance Metrics: 8000Kicks vs. Traditional Footwear</h2>
@@ -667,7 +701,7 @@ li { margin-bottom:10px; }
 <li><strong>Care:</strong> Spot clean with damp cloth. Air dry. Avoid machine washing to preserve Bio-Shield integrity.</li>
 </ul>
 <div class="anchor-container">
-<a class="anchor-link" data-dnbc-lock="true" href="https://8000kicks.sjv.io/donabico_global_media" rel="noopener noreferrer sponsored" style="color: #00ff66; font-weight: bold; text-decoration: none; font-family: 'Times New Roman', Times, serif;" target="_blank">EXPLORE 8000KICKS WATERPROOF HEMP SHOES NOW</a>
+<a class="anchor-link" data-dnbc-lock="true" href="https://8000kicks.sjv.io/donabico_global_media" rel="noopener noreferrer sponsored" style="color: #00ff66; font-weight: bold; text-decoration: none; color: #00ff66; font-weight: bold; text-decoration: none;" target="_blank">EXPLORE 8000KICKS WATERPROOF HEMP SHOES NOW</a>
 </div>
 <!-- ========== KẾT THÚC NỘI DUNG SEO ========== -->
 <!-- ========== SIZE GUIDE & FIT RECOMMENDATIONS ========== -->
@@ -726,11 +760,11 @@ li { margin-bottom:10px; }
 </div>
 <footer class="compliance-footer">
 <div class="compliance-nav">
-<a onclick="showModal('privacy')">Privacy Policy</a> |
-<a onclick="showModal('terms')">Terms of Service</a> |
-<a onclick="showModal('affiliate')">Affiliate Disclosure</a> |
-<a onclick="showModal('returns')">Return Policy</a> |
-<a onclick="showModal('contact')">Contact Support</a>
+<a href="javascript:void(0);" onclick="showModal('privacy')">Privacy Policy</a> |
+<a href="javascript:void(0);" onclick="showModal('terms')">Terms of Service</a> |
+<a href="javascript:void(0);" onclick="showModal('affiliate')">Affiliate Disclosure</a> |
+<a href="javascript:void(0);" onclick="showModal('returns')">Return Policy</a> |
+<a href="javascript:void(0);" onclick="showModal('contact')">Contact Support</a>
 </div>
 <div class="system-stamp">
 <p>© 2026 Donabico Global Media System • All Rights Reserved</p>
