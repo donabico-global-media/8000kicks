@@ -37,99 +37,50 @@ jobs:
           pip install httpx pydantic
           npm install dotenv || echo "skipped"
 
-      - name: Run All Real Modules + ULTRA ENGLISH LOCK
+      - name: Run Real Modules + SUPER LOCK
         env:
           TARGET_URL: ${{ github.event.inputs.target_url || 'https://donabico-global-media.github.io/8000kicks/' }}
         run: |
-          echo "=== V3000 REAL PRODUCTION MODE ==="
+          echo "=== V3000 REAL + SUPER LOCK ==="
 
           mkdir -p Modules .github/scripts
 
-          # Run all .js files
-          for script in .github/scripts/*.js; do
+          # Run only safe .js files
+          for script in .github/scripts/Drone-Matrix.js .github/scripts/Seo-Optimizer.js; do
             if [ -f "$script" ]; then
-              echo "→ REAL JS: $script"
+              echo "→ Running: $script"
               node "$script" || echo "Skipped"
             fi
           done
 
-          # Run all .py files (skip simulation)
+          # Run .py files (skip Performance-Max)
           for script in Modules/*.py .github/scripts/*.py; do
             if [ -f "$script" ]; then
               if [[ "$script" == *"Performance-Max"* ]]; then
-                echo "→ Skipped Simulation"
+                echo "→ Skipped Performance-Max (cause of Vietnamese text)"
                 continue
               fi
-              echo "→ REAL: $script"
+              echo "→ Running: $script"
               python "$script" --url "$TARGET_URL" || echo "Skipped"
             fi
           done
 
-          # === ULTRA HARD ENGLISH LOCK ===
-          echo '<!-- V3000 ULTRA ENGLISH LOCK -->' >> index.html
+          # SUPER ENGLISH LOCK
+          echo '<!-- SUPER LOCK -->' >> index.html
           echo '<script>
-            const ENGLISH_TITLE = "8000Kicks - Waterproof Hemp Shoes | Sustainable & Durable Footwear 2026";
-
-            function forceEnglish() {
-              if (document.title !== ENGLISH_TITLE) {
-                document.title = ENGLISH_TITLE;
-              }
-
-              document.querySelectorAll("h1, h2, h3").forEach(el => {
-                if (el.textContent.includes("Giày") || el.textContent.includes("Việt") || /[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(el.textContent)) {
-                  el.textContent = el.textContent
-                    .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
-                    .replace(/Giày chống nước/gi, "Waterproof Shoes")
-                    .replace(/Bền vững/gi, "Sustainable");
+            const TITLE = "8000Kicks - Waterproof Hemp Shoes | Sustainable & Durable Footwear 2026";
+            function lock() {
+              if (document.title !== TITLE) document.title = TITLE;
+              document.querySelectorAll("h1, h2").forEach(el => {
+                if (el.textContent.includes("Giày") || el.textContent.includes("Việt")) {
+                  el.textContent = el.textContent.replace(/Giày.*Carbon Negative.*/gi, "Waterproof Hemp Shoes - Carbon Negative");
                 }
               });
-
-              const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-              let node;
-              while (node = walker.nextNode()) {
-                if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
-                  node.nodeValue = node.nodeValue
-                    .replace(/Giày Gai Dầu Bền Vững Carbon Negative/gi, "Waterproof Hemp Shoes - Carbon Negative")
-                    .replace(/Giày chống nước/gi, "Waterproof Shoes")
-                    .replace(/Bền vững/gi, "Sustainable");
-                }
-              }
             }
-
-            forceEnglish();
-            setInterval(forceEnglish, 500);
-
-            const observer = new MutationObserver(forceEnglish);
-            observer.observe(document.documentElement, { 
-              childList: true, 
-              subtree: true, 
-              characterData: true 
-            });
-
-            console.log("%c[V3000] ULTRA English Lock Activated", "color:#00ff66");
+            lock();
+            setInterval(lock, 500);
           </script>' >> index.html
-
-          # Green Border + Responsive
-          echo '<style>
-            html, body { overflow-x: hidden !important; max-width: 100vw !important; }
-            body {
-              border: 4px solid #00ff66 !important;
-              box-sizing: border-box;
-              animation: pulseGreen 1.5s infinite alternate ease-in-out !important;
-              padding: 0 8px;
-            }
-            @keyframes pulseGreen {
-              0% { border-color: #00cc55; }
-              100% { border-color: #00ff66; }
-            }
-            table, .comparison-table {
-              width: 100% !important;
-              max-width: 100% !important;
-              overflow-x: auto;
-              display: block;
-            }
-            img { max-width: 100% !important; height: auto !important; }
-          </style>' >> index.html
+          echo '<style>body{border:4px solid #00ff66!important;box-sizing:border-box;animation:pulseGreen 1.5s infinite alternate ease-in-out!important}@keyframes pulseGreen{0%{border-color:#00cc55}100%{border-color:#00ff66}}</style>' >> index.html
 
       - name: Commit & Push
         run: |
@@ -141,7 +92,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "V3000 ULTRA ENGLISH LOCK + REAL PRODUCTION [skip ci]"
+            git commit -m "V3000 REAL + SUPER LOCK [skip ci]"
             git push origin main
             echo "Pushed successfully"
           fi
