@@ -65,7 +65,7 @@ jobs:
             fi
           done
 
-          # ULTRA CLEAN VIETNAMESE TEXT (ALL ELEMENTS)
+          # ULTRA CLEAN VIETNAMESE TEXT
           echo '<!-- ULTRA CLEAN VIETNAMESE TEXT -->' >> index.html
           echo '<script>
             function ultraCleanVietnamese() {
@@ -83,7 +83,7 @@ jobs:
               }
             }
             ultraCleanVietnamese();
-            setInterval(ultraCleanVietnamese, 800);
+            setInterval(ultraCleanVietnamese, 600);
           </script>' >> index.html
 
           # Green Border + Responsive
