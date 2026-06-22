@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "*/15 * * * *"
   workflow_dispatch:
+    inputs:
+      target_url:
+        description: 'Target URL for deployment optimization'
+        required: false
+        default: 'https://donabico-global-media.github.io/8000kicks/'
 
 permissions:
   contents: write
@@ -13,89 +18,103 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Pull Latest
+      - name: Pull Latest Changes
         run: |
           git fetch origin main
           git reset --hard origin/main
 
-      - name: Setup Environment
+      - name: Setup Python Environment
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      - uses: actions/setup-node@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install Dependencies
+      - name: Install System Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install httpx pydantic beautifulsoup4
           npm install dotenv || echo "skipped"
 
-      - name: Run Real Modules + SHIELD AFFILIATE BUTTONS
+      - name: Execute Swarm Modules
         env:
           TARGET_URL: ${{ github.event.inputs.target_url || 'https://donabico-global-media.github.io/8000kicks/' }}
         run: |
           echo "=== V3000 REAL PRODUCTION MODE ==="
-
           mkdir -p Modules .github/scripts
 
-          # 1. Chạy các file JS
+          # 1. Thực thi toàn bộ Script JS điều hướng UI
           for script in .github/scripts/*.js; do
             if [ -f "$script" ]; then
+              echo "Running JS: $script"
               node "$script" || echo "Skipped JS"
             fi
           done
 
-          # 2. Chạy các file Python trong Modules/ (Hệ thống tự động cô lập lỗi ghi đè)
+          # 2. Thực thi toàn bộ Script Python thu thập dữ liệu (Bỏ qua mô phỏng)
           for script in Modules/*.py .github/scripts/*.py; do
             if [ -f "$script" ]; then
               if [[ "$script" == *"Performance-Max"* ]]; then
                 continue
               fi
+              echo "Running Python Module: $script"
               python "$script" --url "$TARGET_URL" || echo "Skipped Python"
             fi
           done
 
-          # 3. PYTHON POST-PROCESSOR: Khôi phục và bảo vệ văn bản nút gốc, xóa bỏ text rác hệ thống
+      - name: Python Button Shield Post-Processor
+        run: |
           python -c '
 import os
 from bs4 import BeautifulSoup
 
-file_path = "index.html"
+file_path = "landing_pages.html"
+if not os.path.exists(file_path):
+    file_path = "index.html"
+
 if os.path.exists(file_path):
+    print(f"Targeting file for shield: {file_path}")
     with open(file_path, "r", encoding="utf-8") as f:
         soup = BeautifulSoup(f.read(), "html.parser")
     
-    # Tìm tất cả các link affiliate hướng tới 8000kicks và ép nội dung thương mại sạch
+    # Tìm và bảo vệ khôi phục toàn bộ anchor text của link affiliate 8000kicks
     links = soup.find_all("a")
     for link in links:
         href = link.get("href", "")
         if "8000kicks" in href or "sjv.io" in href:
-            # Kiểm tra nếu nút bị dính chữ hệ thống, ép trả về chữ kêu gọi hành động chuẩn Tiếng Anh
             link.string = "EXPLORE 8000KICKS WATERPROOF HEMP SHOES NOW"
-            # Thêm class hoặc style cố định cho đẹp mắt như trong ảnh mẫu
-            link["style"] = "color: #00ff66; font-weight: bold; text-decoration: none;"
+            link["style"] = "color: #00ff66; font-weight: bold; text-decoration: none; font-family: \"Times New Roman\", Times, serif;"
 
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(str(soup))
-print("=== SHIELD: Affiliate Buttons Restored & Protected ===")
+    print("=== SHIELD SUCCESS: Buttons Restored to English Standard ===")
 '
 
-          # 4. ULTRA CLEAN VIETNAMESE TEXT (Bản sửa lỗi không lặp vô hạn)
-          echo '<!-- ULTRA CLEAN VIETNAMESE TEXT -->' >> index.html
+      - name: Inject Clean Script & Mobile UI Rules
+        run: |
+          # Xác định file landing tĩnh đang hoạt động
+          TARGET_FILE="index.html"
+          if [ -f "landing_pages.html" ]; then
+             TARGET_FILE="landing_pages.html"
+          fi
+
+          # Thêm script dọn chữ tiếng Việt thừa cho các vùng ngoài link
+          echo "<!-- ULTRA CLEAN VIETNAMESE TEXT -->" >> $TARGET_FILE
           echo '<script>
             function ultraCleanVietnamese() {
               const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
               let node;
               while (node = walker.nextNode()) {
                 if (node.parentElement && (node.parentElement.closest("a") || node.parentElement.tagName === "A")) {
-                  continue; // Tuyệt đối không chạm vào text bên trong thẻ link
+                  continue; 
                 }
                 if (/[àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ]/i.test(node.nodeValue)) {
                   node.nodeValue = node.nodeValue
@@ -105,24 +124,39 @@ print("=== SHIELD: Affiliate Buttons Restored & Protected ===")
               }
             }
             document.addEventListener("DOMContentLoaded", ultraCleanVietnamese);
-          </script>' >> index.html
+          </script>' >> $TARGET_FILE
 
-          # Green Border + Responsive Style
+          # Ép cấu trúc font Times New Roman co giãn mượt và viền xanh hệ thống hoạt động
           echo '<style>
-            html, body { overflow-x: hidden !important; max-width: 100vw !important; }
-            body { border: 4px solid #00ff66 !important; box-sizing: border-box; padding: 0 8px; }
-            table, .comparison-table { width: 100% !important; max-width: 100% !important; overflow-x: auto; display: block; }
+            html, body { 
+              overflow-x: hidden !important; 
+              max-width: 100vw !important; 
+              font-family: "Times New Roman", Times, serif !important;
+            }
+            body { 
+              border: 4px solid #00ff66 !important; 
+              box-sizing: border-box; 
+              padding: 0 8px; 
+            }
+            table, .comparison-table { 
+              width: 100% !important; 
+              max-width: 100% !important; 
+              overflow-x: auto; 
+              display: block; 
+            }
             img { max-width: 100% !important; height: auto !important; }
-          </style>' >> index.html
+          </style>' >> $TARGET_FILE
 
-      - name: Commit & Push
+      - name: Commit & Push Verified Clean Build
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
           git add .
           if git diff --cached --quiet; then
-            echo "No changes"
+            echo "No changes detected to commit."
           else
-            git commit -m "V3000 REAL + PYTHON BUTTON SHIELD [skip ci]"
+            git commit -m "Fix workflow name & enforce structural security [skip ci]"
             git push origin main
+            echo "Changes pushed successfully."
           fi
