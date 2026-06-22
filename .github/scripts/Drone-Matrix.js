@@ -6,16 +6,15 @@
 class DroneMatrix {
     constructor() {
         this.signature = "V3000-Ω-DRONE-MATRIX";
-        console.log(`%c[DRONE-MATRIX] Activated - Signal Harvesting Started`, "color: #00e5ff; font-weight: bold;");
     }
 
     harvestSignals() {
         const signals = {
             scrollDepth: Math.round((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100),
             timeOnPage: Math.floor(performance.now() / 1000),
-            droneFocus: document.querySelectorAll('img[alt*="drone"]').length > 0
+            droneFocus: document.querySelectorAll('img[alt*=\"drone\"]').length > 0
         };
-        console.log(`%c[DRONE-MATRIX] Signals:`, "color: #00e5ff", signals);
+        console.log(`%c[DRONE-MATRIX] Signals harvested:`, "color: #00e5ff", signals);
         return signals;
     }
 
