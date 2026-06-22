@@ -1,11 +1,8 @@
 name: "ACTIVE-MODULES-SOTA"
 
-# KHÓA CỨNG HẠ TẦNG: Chặn vĩnh viễn chạy ngầm (Cron)
-# Hệ thống chỉ kích hoạt DUY NHẤT khi bạn bấm nút tay thủ công (Manual Trigger)
 on:
   workflow_dispatch:
 
-# Quyền hạn ở mức thấp nhất: Chỉ đọc/ghi file thuần túy nội bộ kho
 permissions:
   contents: write
 
@@ -38,13 +35,21 @@ jobs:
           echo "   🔰 KÍCH HOẠT HỆ THỐNG MÔ-ĐUN TỰ TRỊ TOÀN TRI V3000   "
           echo "========================================================="
           
+          # Cấu hình URL thực địa mặc định cho các module Siphon cũ cần tham số
+          DEFAULT_URL="https://donabico-global-media.github.io/8000kicks/"
+          
           if [ -d "Modules" ]; then
-            # Dò tìm và sắp xếp thứ tự chạy tuần tự của 4 file .py trong thư mục Modules/
             find Modules/ -type f -name "*.py" | sort | while read -r script; do
               echo "⏳ [PROCESSING] Đang khởi chạy: $script..."
               
-              # Thực thi mô-đun độc lập và kiểm tra mã trạng thái trả về (Exit Code)
-              if python "$script"; then
+              # Tự trị thông minh: Nếu phát hiện là file Siphon thì tự bù thêm tham số --url
+              if [[ "$script" == *"Siphon"* ]]; then
+                EXEC_CMD="python \"$script\" --url $DEFAULT_URL"
+              else
+                EXEC_CMD="python \"$script\""
+              fi
+              
+              if eval $EXEC_CMD; then
                 echo "✅ [SUCCESS] $script đã hoàn thành nhiệm vụ ổn định!"
               else
                 echo "❌ [FAILED] $script gặp sự cố trong quá trình thực thi."
@@ -66,6 +71,6 @@ jobs:
             echo "✅ KHÔNG CÓ THAY ĐỔI - Hệ thống giữ nguyên trạng thái sạch."
             echo "========================================================="
           else
-            git commit -m "V3000-Ω AUTONOMOUS MO-DUL PRODUCTION INTEGRATION [skip ci]"
+            git commit -m "V3000-Ω AUTONOMOUS SYSTEM STABILIZATION [skip ci]"
             git push origin main
           fi
