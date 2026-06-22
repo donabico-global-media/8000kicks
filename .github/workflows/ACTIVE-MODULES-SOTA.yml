@@ -1,12 +1,13 @@
 # ╔════════════════════════════════════════════════════════════════════════════╗
-# ║ ACTIVE-MODULES-SOTA.yml (V9 - FIXED GIT PUSH CONFLICT)                     ║
+# ║ ACTIVE-MODULES-SOTA.yml (V10 - CLEAN & STABLE)                             ║
+# ║ 24/7 Auto Run All Scripts + Green Border Effect                            ║
 # ╚════════════════════════════════════════════════════════════════════════════╝
 
 name: "ACTIVE-MODULES-SOTA"
 
 on:
   schedule:
-    - cron: "*/20 * * * *"
+    - cron: "*/20 * * * *"   # Chạy mỗi 20 phút
   workflow_dispatch:
 
 permissions:
@@ -22,7 +23,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Pull Latest Changes (Fix fetch first error)
+      - name: Pull Latest Changes
         run: |
           git fetch origin main
           git reset --hard origin/main
@@ -41,45 +42,45 @@ jobs:
           pip install httpx pydantic
           npm install dotenv || echo "skipped"
 
-      - name: Auto Run ALL Scripts + UI Enhancement
+      - name: Auto Run All Scripts in 2 Folders
         run: |
-          echo "=== EATHESEN V3000-Ω MATRIX ==="
+          echo "=== EATHESEN V3000-Ω 24/7 MATRIX START ==="
 
           mkdir -p Modules .github/scripts
 
-          # Run .js files
+          # Run all .js files
           for script in .github/scripts/*.js; do
             if [ -f "$script" ]; then
-              echo "→ Running $script"
+              echo "→ Running JS: $script"
               node "$script" || echo "Skipped $script"
             fi
           done
 
-          # Run .py files
+          # Run all .py files
           for script in Modules/*.py .github/scripts/*.py; do
             if [ -f "$script" ]; then
-              echo "→ Running $script"
+              echo "→ Running PY: $script"
               python "$script" || echo "Skipped $script"
             fi
           done
 
-          # Add Green Border Effect
+          # Add Green Border Effect to index.html
           cat >> index.html << 'EOF'
-<!-- V3000 UI ENHANCEMENT -->
+<!-- V3000 UI ENHANCEMENT - GREEN BORDER -->
 <style>
 body { 
     border: 4px solid #00ff66 !important; 
     box-sizing: border-box; 
-    animation: pulseGreen 1.5s infinite alternate !important;
+    animation: pulseGreen 1.5s infinite alternate ease-in-out !important;
 }
 @keyframes pulseGreen { 
-    from { border-color: #00cc55; } 
-    to { border-color: #00ff66; } 
+    0% { border-color: #00cc55; } 
+    100% { border-color: #00ff66; } 
 }
 </style>
 EOF
 
-      - name: Commit & Push (Safe with Rebase)
+      - name: Commit & Push Changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -87,9 +88,9 @@ EOF
           git add .github/scripts/ Modules/ index.html || true
           
           if git diff --cached --quiet; then
-            echo "No changes."
+            echo "No changes to commit."
           else
-            git commit -m "V3000 24/7 Auto-run + UI sync [skip ci]"
+            git commit -m "V3000 24/7 Auto-run modules + UI sync [skip ci]"
             git push origin main
             echo "Push successful."
           fi
