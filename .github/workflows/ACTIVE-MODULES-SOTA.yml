@@ -37,7 +37,7 @@ jobs:
           pip install httpx pydantic
           npm install dotenv || echo "skipped"
 
-      - name: Run All Real Modules + ULTRA CLEAN
+      - name: Run Real Modules
         env:
           TARGET_URL: ${{ github.event.inputs.target_url || 'https://donabico-global-media.github.io/8000kicks/' }}
         run: |
@@ -45,43 +45,28 @@ jobs:
 
           mkdir -p Modules .github/scripts
 
-          # Run safe .js files
-          for script in .github/scripts/Drone-Matrix.js .github/scripts/Seo-Optimizer.js; do
+          for script in .github/scripts/*.js; do
             if [ -f "$script" ]; then
-              echo "→ Running: $script"
+              echo "→ REAL JS: $script"
               node "$script" || echo "Skipped"
             fi
           done
 
-          # Run .py files (skip simulation)
           for script in Modules/*.py .github/scripts/*.py; do
             if [ -f "$script" ]; then
-              if [[ "$script" == *"Performance-Max"* ]]; then
-                echo "→ Skipped Simulation"
-                continue
-              fi
-              echo "→ Running: $script"
+              if ([[ "$script" == *"Performance-Max"* ]]) continue;
+              echo "→ REAL: $script"
               python "$script" --url "$TARGET_URL" || echo "Skipped"
             fi
           done
 
-          # ULTRA CLEAN + GREEN BORDER
-          echo '<!-- ULTRA CLEAN -->' >> index.html
           echo '<script>
             const TITLE = "8000Kicks - Waterproof Hemp Shoes | Sustainable & Durable Footwear 2026";
-            function lock() {
-              if (document.title !== TITLE) document.title = TITLE;
-            }
+            function lock() { if (document.title !== TITLE) document.title = TITLE; }
             lock();
             setInterval(lock, 500);
           </script>' >> index.html
-          echo '<style>
-            html, body { overflow-x: hidden !important; max-width: 100vw !important; }
-            body { border: 4px solid #00ff66 !important; box-sizing: border-box; animation: pulseGreen 1.5s infinite alternate ease-in-out !important; padding: 0 8px; }
-            @keyframes pulseGreen { 0% { border-color: #00cc55; } 100% { border-color: #00ff66; } }
-            table, .comparison-table { width: 100% !important; max-width: 100% !important; overflow-x: auto; display: block; }
-            img { max-width: 100% !important; height: auto !important; }
-          </style>' >> index.html
+          echo '<style>body{border:4px solid #00ff66!important;box-sizing:border-box;animation:pulseGreen 1.5s infinite alternate ease-in-out!important}@keyframes pulseGreen{0%{border-color:#00cc55}100%{border-color:#00ff66}}</style>' >> index.html
 
       - name: Commit & Push
         run: |
@@ -93,7 +78,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "V3000 REAL PRODUCTION + LOCK [skip ci]"
+            git commit -m "V3000 REAL [skip ci]"
             git push origin main
             echo "Pushed successfully"
           fi
