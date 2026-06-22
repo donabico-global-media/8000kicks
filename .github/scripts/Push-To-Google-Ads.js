@@ -86,7 +86,7 @@ async function pushToGoogleAds(payloadData) {
 
 // ==================== CHẠY KHI GỌI TRỰC TIẾP ====================
 if (require.main === module) {
-  console.log("🚀 Chạy push-to-google-ads.js (embedded payload)");
+  console.log("🚀 Chạy Push-To-Google-Ads.js (embedded payload)");
   pushToGoogleAds(payload).catch(console.error);
 }
 
