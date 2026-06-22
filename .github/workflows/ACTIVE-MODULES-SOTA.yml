@@ -37,7 +37,7 @@ jobs:
           pip install httpx pydantic
           npm install dotenv || echo "skipped"
 
-      - name: Run Real Modules
+      - name: Run Real Modules + ULTRA CLEAN
         env:
           TARGET_URL: ${{ github.event.inputs.target_url || 'https://donabico-global-media.github.io/8000kicks/' }}
         run: |
@@ -45,24 +45,37 @@ jobs:
 
           mkdir -p Modules .github/scripts
 
+          # Run all .js files (skip problematic one)
           for script in .github/scripts/*.js; do
             if [ -f "$script" ]; then
+              if [[ "$script" == *"Push-To-Google-Ads"* ]]; then
+                echo "→ Skipped problematic file: $script"
+                continue
+              fi
               echo "→ REAL JS: $script"
-              node "$script" || echo "Skipped"
+              node "$script" || echo "Skipped $script"
             fi
           done
 
+          # Run all .py files (skip simulation)
           for script in Modules/*.py .github/scripts/*.py; do
             if [ -f "$script" ]; then
-              if ([[ "$script" == *"Performance-Max"* ]]) continue;
+              if [[ "$script" == *"Performance-Max"* ]]; then
+                echo "→ Skipped Simulation"
+                continue
+              fi
               echo "→ REAL: $script"
               python "$script" --url "$TARGET_URL" || echo "Skipped"
             fi
           done
 
+          # ULTRA CLEAN + GREEN BORDER
+          echo '<!-- ULTRA CLEAN -->' >> index.html
           echo '<script>
             const TITLE = "8000Kicks - Waterproof Hemp Shoes | Sustainable & Durable Footwear 2026";
-            function lock() { if (document.title !== TITLE) document.title = TITLE; }
+            function lock() {
+              if (document.title !== TITLE) document.title = TITLE;
+            }
             lock();
             setInterval(lock, 500);
           </script>' >> index.html
@@ -78,7 +91,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "V3000 REAL [skip ci]"
+            git commit -m "V3000 REAL + LOCK [skip ci]"
             git push origin main
             echo "Pushed successfully"
           fi
