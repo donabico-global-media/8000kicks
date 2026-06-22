@@ -1,9 +1,3 @@
-# ╔════════════════════════════════════════════════════════════════════════════╗
-# ║ ACTIVE-MODULES-SOTA.yml                                                    ║
-# ║ EATHESEN V3000-Ω SOTA | DYNAMIC MODULE AUTO-DISCOVERY                      ║
-# ║ Tự động nhận diện & chạy VÔ HẠN tất cả file trong .github/scripts          ║
-# ╚════════════════════════════════════════════════════════════════════════════╝
-
 name: "ACTIVE-MODULES-SOTA"
 
 on:
@@ -53,57 +47,33 @@ jobs:
           python -m pip install --upgrade pip
           pip install httpx pydantic pyngrok
 
-      - name: Auto Discover & Run All Modules (Vô Hạn - Dynamic)
+      - name: Run All Modules in Folder (Tự động Vô Hạn)
         env:
           TARGET_URL: ${{ github.event.inputs.target_url }}
           TARGET_KHO: ${{ github.event.inputs.target_kho }}
           NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTHTOKEN }}
         run: |
           echo "=== EATHESEN V3000-Ω MATRIX FOR BRAND: $TARGET_KHO ==="
-          echo "Auto discovering all scripts in .github/scripts/..."
-
-          # Tạo thư mục nếu chưa có
-          mkdir -p .github/scripts Modules
-
-          # Chạy tất cả file .py trong .github/scripts
-          echo "=== Running Python Modules ==="
-          for script in .github/scripts/*.py; do
-            if [ -f "$script" ]; then
-              echo "Running $script..."
-              python "$script" --url "$TARGET_URL" --kho "$TARGET_KHO" || echo "Skipped $script (error)"
-            fi
+          cd Modules
+          for script in *.py; do
+            echo "Running $script..."
+            python "$script" --url "$TARGET_URL" --kho "$TARGET_KHO" || echo "Skipped $script"
           done
-
-          # Chạy tất cả file .js (nếu có Node.js support)
-          echo "=== Running JavaScript Modules ==="
-          if command -v node &> /dev/null; then
-            for script in .github/scripts/*.js; do
-              if [ -f "$script" ]; then
-                echo "Running $script..."
-                node "$script" || echo "Skipped $script (error)"
-              fi
-            done
-          else
-            echo "Node.js not installed. Skipping JS modules."
-          fi
-
-          # NGROK Tunnel (nếu cần)
-          if [ -f "Traffic-Siphon.py" ]; then
-            pyngrok config add-authtoken $NGROK_AUTHTOKEN
-            python Traffic-Siphon.py
-          fi
+          # NGROK Tunnel
+          pyngrok config add-authtoken $NGROK_AUTHTOKEN
+          python Traffic-Siphon.py
 
       - name: Commit & Push (Safe)
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          git add index.html Modules/*.json .github/scripts/* || true
+          git add index.html Modules/*.json || true
           
           if git diff --cached --quiet; then
             echo "[V3000-INFO] No changes to commit for $TARGET_KHO."
           else
-            git commit -m "feat(adtech): V3000 Dynamic Matrix + Auto-run all scripts in .github/scripts for ${{ github.event.inputs.target_kho }} [skip ci]"
+            git commit -m "feat(adtech): V3000 Matrix + Golden 2px + All Modules for ${{ github.event.inputs.target_kho }} [skip ci]"
             git push origin main
             echo "[V3000-SUCCESS] Pushed successfully for $TARGET_KHO."
           fi
