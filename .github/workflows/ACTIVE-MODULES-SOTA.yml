@@ -1,6 +1,8 @@
 name: "ACTIVE-MODULES-SOTA"
 
 on:
+  schedule:
+    - cron: '*/20 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -35,21 +37,19 @@ jobs:
           echo "   🔰 KÍCH HOẠT HỆ THỐNG MÔ-ĐUN TỰ TRỊ TOÀN TRI V3000   "
           echo "========================================================="
           
-          # LỆNH THANH LỌC TỐI CAO: Khử tận gốc thư mục rác node_modules trên máy chủ ảo
+          # TIÊU DIỆT THƯ MỤC RÁC ĐỂ TRÁNH NẶNG BỘ NHỚ LƯU TRỮ TRÊN GIT
           if [ -d "node_modules" ]; then
             echo "🔥 [FOUND] Phát hiện thư mục rác node_modules. Tiến hành tiêu diệt..."
             rm -rf node_modules
             echo "✅ [PURGED] Đã xóa sổ node_modules khỏi cấu trúc vận hành."
           fi
           
-          # Cấu hình URL thực địa mặc định cho các module Siphon cũ cần tham số
           DEFAULT_URL="https://donabico-global-media.github.io/8000kicks/"
           
           if [ -d "Modules" ]; then
             find Modules/ -type f -name "*.py" | sort | while read -r script; do
               echo "⏳ [PROCESSING] Đang khởi chạy: $script..."
               
-              # Tự trị thông minh: Nếu phát hiện là file Siphon thì tự bù thêm tham số --url
               if [[ "$script" == *"Siphon"* ]]; then
                 EXEC_CMD="python \"$script\" --url $DEFAULT_URL"
               else
@@ -72,7 +72,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Thực hiện xóa vĩnh viễn node_modules trên cây thư mục GitHub (nếu có)
           if git status --porcelain | grep -q "node_modules"; then
             git rm -r --cached node_modules 2>/dev/null || true
           fi
@@ -80,9 +79,9 @@ jobs:
           git add .
           if git diff --cached --quiet; then
             echo "========================================================="
-            echo "✅ KHÔNG CÓ THAY ĐỔI - Hệ thống giữ nguyên trạng thái sạch."
+            echo "✅ KHÔNG CÓ THAY ĐỔI - Hạ tầng GitHub Pages giữ nguyên trạng thái."
             echo "========================================================="
           else
-            git commit -m "V3000-Ω AUTONOMOUS SYSTEM STABILIZATION & PURGE [skip ci]"
+            git commit -m "V3000-Ω SMART GITHUB PAGES AUTO-UPDATE [skip ci]"
             git push origin main
           fi
