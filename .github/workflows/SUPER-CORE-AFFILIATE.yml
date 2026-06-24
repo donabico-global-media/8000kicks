@@ -14,10 +14,9 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: uses/actions/checkout@v3
         with:
           persist-credentials: true
-          # Lấy toàn bộ lịch sử commit để phục vụ quá trình rebase mượt mà
           fetch-depth: 0
 
       - name: Set up Python
@@ -33,15 +32,21 @@ jobs:
           git config --global user.name "EATHESEN-CORE-BOT"
           git config --global user.email "core@donabicomedia.net"
           
+          # 1. CHIẾN LƯỢC BẢO VỆ: Sao lưu tệp JSON vừa tính toán ra vùng nhớ tạm của Linux
+          cp system_bridge.json /tmp/system_bridge.json
+          
+          # 2. ĐỒNG BỘ CỨNG: Ép máy ảo cập nhật trạng thái mới nhất từ Remote (Kéo index.html mới về nếu có)
+          git fetch origin main
+          git reset --hard origin/main
+          
+          # 3. GHI ĐÈ SOTA: Đưa tệp JSON mới nhất trở lại thư mục gốc, đè bẹp phiên bản cũ
+          cp /tmp/system_bridge.json system_bridge.json
+          
+          # 4. TIẾN HÀNH ĐẨY MÃ NGUỒN SẠCH CỦA BOT
           git add system_bridge.json
           if ! git diff --cached --quiet; then
             git commit -m "¢24-Evolution: Sync Matrix $(date -u +'%Y-%m-%d %H:%M:%S') UTC"
-            
-            # GIẢI PHÁP SỬA LỖI: Kéo dữ liệu mới nhất về và rebase đè commit của bot lên trên
-            git pull --rebase origin main
-            
-            # Đẩy dữ liệu an toàn lên hệ thống
             git push origin main
           else
-            echo "[EATHESEN] Không có sự thay đổi nào được phát hiện trong chu kỳ này."
+            echo "[EATHESEN] Trạng thái dữ liệu không đổi, bỏ qua chu kỳ Commit này."
           fi
