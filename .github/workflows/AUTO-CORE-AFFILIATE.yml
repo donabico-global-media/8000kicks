@@ -1,0 +1,44 @@
+name: "AUTO-CORE-AFFILIATE"
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Super-Core-Affiliate/Super-Core-Affiliate.py'
+  schedule:
+    - cron: '0 * * * *' # Tự chạy mỗi giờ để làm mới nội dung Affiliate
+  workflow_dispatch:     # Bấm tay kích nổ quy trình bất cứ lúc nào
+
+permissions:
+  contents: write
+
+jobs:
+  autonomous-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "🎛️ Hạ cánh Codebase Vệ tinh"
+        uses: actions/checkout@v4
+
+      - name: "🌀 Khởi tạo Môi trường Python (Drone SOTA Engine)"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: "📦 Cài đặt Thư viện Lõi"
+        run: |
+          python -m pip install --upgrade pip
+          pip install langgraph jinja2
+
+      - name: "🚀 Kích hoạt Bộ não Super-Core"
+        run: |
+          echo "[📡 ENGINE START] Đang thực thi: Super-Core-Affiliate.py..."
+          python3 Super-Core-Affiliate/Super-Core-Affiliate.py
+          echo "[✅ ENGINE SUCCESS] Landing Page đã được tái tạo."
+
+      - name: "💾 Đồng bộ hóa kết quả về Kho"
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto-update Landing Page: 8000kicks Super Core"
+          file_pattern: 'index.html'
+          commit_user_name: "EATHESEN-DRONE-BOT"
+          commit_user_email: "bot@donabico-media.com"
