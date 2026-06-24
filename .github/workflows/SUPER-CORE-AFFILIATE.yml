@@ -17,6 +17,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           persist-credentials: true
+          # Lấy toàn bộ lịch sử commit để phục vụ quá trình rebase mượt mà
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -24,7 +26,6 @@ jobs:
           python-version: '3.x'
 
       - name: Harmonic Calibration (Execute Core Script)
-        # Đã cập nhật đường dẫn chính xác chứa khoảng trắng
         run: python "Super Core Affiliate/Super-Core-Affiliate.py"
 
       - name: Synchronize Singularity (Commit and Push Gateway)
@@ -32,10 +33,14 @@ jobs:
           git config --global user.name "EATHESEN-CORE-BOT"
           git config --global user.email "core@donabicomedia.net"
           
-          # tệp system_bridge.json vẫn sẽ được tạo ra ở thư mục gốc của Repo để index.html đọc trực tiếp
           git add system_bridge.json
           if ! git diff --cached --quiet; then
             git commit -m "¢24-Evolution: Sync Matrix $(date -u +'%Y-%m-%d %H:%M:%S') UTC"
+            
+            # GIẢI PHÁP SỬA LỖI: Kéo dữ liệu mới nhất về và rebase đè commit của bot lên trên
+            git pull --rebase origin main
+            
+            # Đẩy dữ liệu an toàn lên hệ thống
             git push origin main
           else
             echo "[EATHESEN] Không có sự thay đổi nào được phát hiện trong chu kỳ này."
