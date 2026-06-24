@@ -2,11 +2,11 @@ name: "CONNECT-DRONE-BRIDGE"
 
 on:
   repository_dispatch:
-    # Kích hoạt 24/7 từ cả 2 nguồn: Lệnh từ Kho 4 bắn sang VÀ Xung tín hiệu tự động từ Mesh-Core-V3000.js đẩy về
+    # Lắng nghe xung lệnh chính xác từ Kho 4 bắn sang và từ file Mesh-Core-V3000.js đẩy về
     types: [LAUNCH_DRONE_MESH_CONNECT, OCEAN_SIGNAL_INBOUND]
   
   schedule:
-    # Cơ chế kích hoạt ngầm 24/7: Cứ mỗi 10 phút tự động thức dậy kiểm tra toàn bộ 13 module vệ tinh
+    # Chu kỳ tự động đánh thức 24/7 kiểm tra trạng thái 13 module vệ tinh ngầm
     - cron: '*/10 * * * *'
     
   workflow_dispatch:
@@ -38,12 +38,12 @@ jobs:
 
       - name: "📡 Thực thi Kết nối - Phản hồi trạng thái về Tổng trạm Kho 4"
         env:
-          # Giải pháp tàng hình: Ưu tiên bóc tách mã xác thực do Kho 4 gửi sang, bẻ gãy hoàn toàn mã lỗi 404
+          # Rút và ép xung sử dụng mã xác thực cấp cao do Kho 4 ký gửi sang để bẻ gãy hoàn toàn mã lỗi 404
           BRIDGE_TOKEN: ${{ github.event.client_payload.bridge_temporary_token || github.token }}
         run: |
           echo "[📡 CONNECTING] Đang giải mã Token định danh mạng lưới..."
           
-          # Định vị tọa độ chính xác theo cấu trúc di cư mới của Chỉ huy
+          # Định vị tọa độ chính xác của tệp cầu nối
           TARGET_FILE="Bridge/Connect-Drone-Bridge.py"
           
           if [ -f "$TARGET_FILE" ]; then
