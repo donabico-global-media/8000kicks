@@ -1081,25 +1081,6 @@ pushAssetGroup().catch(console.error);</code></pre>
                 const qVal = this.qMatrix[state] && this.qMatrix[state][act] !== undefined ? this.qMatrix[state][act] : 0.1;
                 if (qVal > bestValue) { bestValue = qVal; bestAction = act; }
             });
-            return bestAction;
-        },
-
-        mutateUI(action) {
-            const h1Element = document.querySelector('h1');
-            if (!h1Element) return;
-
-            let optimizedTitle = "8000Kicks - The World's First Waterproof Hemp Shoes";
-            switch(action) {
-                case "MORPH_HERO_WATERPROOF":
-                    optimizedTitle = "8000Kicks \u2014 Gi\u00e0y Gai D\u1ea7u Ch\u1ed1ng N\u01b0\u1edbc Tuy\u1ec7t \u0110\u1ed1i | C\u00f4ng Ngh\u1ec7 Bio-Shield";
-                    break;
-                case "MORPH_HERO_SUSTAINABLE":
-                    optimizedTitle = "8000Kicks Eco Sneakers \u2014 Gi\u00e0y Th\u1ec3 Thao B\u1ec1n V\u1eefng Carbon Negative";
-                    break;
-                case "INJECT_LIVE_URGENCY":
-                    optimizedTitle = "8000Kicks Travel Shoes \u2014 Si\u00eau Nh\u1eb9 320g Thay Th\u1ebf M\u1ecdi \u0110\u00f4i Gi\u00e0y";
-                    break;
-            }
             h1Element.innerHTML = optimizedTitle;
 
             document.querySelectorAll('.anchor-link').forEach(link => {
