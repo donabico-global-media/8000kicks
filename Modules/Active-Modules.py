@@ -1,120 +1,64 @@
-#!/usr/bin/env python3
-"""
-EATHESEN V3000-Ω | AUTONOMOUS MATRIX INJECTOR v2 (Multi-Brand Scale Ready)
-"""
+import json
 import os
-import re
-import sys
-import getopt
-import concurrent.futures
-from datetime import datetime, timezone
-from collections import defaultdict
+from datetime import datetime
 
-def get_protocols_from_file(module_file):
-    try:
-        with open(module_file, "r", encoding="utf-8") as f:
-            content = f.read()
-        if "PROTOCOLS = [" in content:
-            start = content.find("PROTOCOLS = [") + len("PROTOCOLS = [")
-            end = content.find("]", start)
-            protocols_str = content[start:end]
-            return [p.strip().strip("'\"") for p in protocols_str.split(",") if p.strip()]
-    except:
-        pass
-    return []
-
-def execute_single_module(module_file, target_url):
-    if module_file == "Active-Modules.py":
-        return None, []
-    try:
-        cmd = f"'{sys.executable}' '{module_file}' --url '{target_url}' > /dev/null 2>&1"
-        exit_code = os.system(cmd)
-        protocols = get_protocols_from_file(module_file)
-        
-        if exit_code == 0:
-            return f"✅ {module_file}", protocols
-        else:
-            return f"❌ {module_file}", protocols
-    except Exception as e:
-        return f"💥 {module_file} -> {str(e)}", []
-
-def run_massive_siphon_matrix(target_url, target_kho=""):
-    print(f"[V3000-Ω] === EATHESEN MATRIX ACTIVATION FOR: {target_kho or 'Default'} ===")
-    all_files = os.listdir(".")
-    module_targets = [f for f in all_files if f.endswith(".py") and f != "Active-Modules.py"]
+def activate_all_modules():
+    # 1. Định vị các đường dẫn cốt lõi
+    current_dir = os.path.dirname(os.path.abspath(__file__)) # Thư mục Modules/
+    root_dir = os.path.dirname(current_dir)                 # Thư mục gốc dự án
     
-    print(f"[V3000-Ω] Tổng module phát hiện: {len(module_targets)}")
-    print("-" * 70)
+    # Đường dẫn đến file bridge tổng của toàn bộ ma trận hệ thống
+    core_bridge_path = os.path.join(root_dir, "Super Core Affiliate", "system_bridge.json")
+    
+    # 2. Quét vô hạn/tự động cấu trúc thư mục con bên trong Modules/
+    detected_modules = {}
+    print("[+] KÍCH HOẠT NEURAL SIPHON PROTOCOL - QUÉT MODULES...")
+    
+    for item in os.listdir(current_dir):
+        item_path = os.path.join(current_dir, item)
+        # Nếu là thư mục con (ví dụ: Modules/Anti_Bot, Modules/SEO_Siphon...)
+        if os.path.isdir(item_path) and not item.startswith(".") and not item.startswith("__"):
+            
+            # Cấu hình mặc định cho mỗi Module tìm thấy
+            module_config = {
+                "status": "ACTIVE_SOTA",
+                "mode": "HYPER_INTELLIGENCE_2026",
+                "last_pulse": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+            }
+            
+            # Nếu bên trong Module con có file config riêng (json), nạp bổ sung vào hệ thống
+            config_file = os.path.join(item_path, "config.json")
+            if os.path.exists(config_file):
+                try:
+                    with open(config_file, "r", encoding="utf-8") as f:
+                        custom_data = json.load(f)
+                        module_config.update(custom_data)
+                except Exception:
+                    pass
+                    
+            detected_modules[item] = module_config
+            print(f" |-- [ONLINE] Module: {item} -> Đã đồng bộ luồng tín hiệu.")
 
-    results = []
-    protocol_groups = defaultdict(list)
+    # 3. Nạp và chuyển tải dữ liệu trực tiếp sang cho Super Core
+    base_bridge_data = {}
+    if os.path.exists(core_bridge_path):
+        try:
+            with open(core_bridge_path, "r", encoding="utf-8") as f:
+                base_bridge_data = json.load(f)
+        except Exception:
+            pass
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=40) as executor:
-        futures = {executor.submit(execute_single_module, mod, target_url): mod for mod in module_targets}
-        for future in concurrent.futures.as_completed(futures):
-            status, protocols = future.result()
-            if status:
-                print(status)
-                for p in protocols:
-                    print(f"   ✅ {p}")
-                    if "Google" in p: protocol_groups["Google"].append(p)
-                    elif any(x in p for x in ["Bing", "Microsoft"]): protocol_groups["Bing/Microsoft"].append(p)
-                    elif any(x in p for x in ["Facebook", "Meta", "Instagram"]): protocol_groups["Meta/Social"].append(p)
-                    elif "TikTok" in p: protocol_groups["TikTok"].append(p)
-                    elif any(x in p for x in ["Affiliate", "Amazon", "CJ", "Impact"]): protocol_groups["Affiliate"].append(p)
-                    else: protocol_groups["Other"].append(p)
-                results.append((status, protocols))
+    # Hợp nhất (Merge) danh sách Module hoạt động vào lõi dữ liệu của Super Core
+    base_bridge_data["active_modules_matrix"] = detected_modules
+    base_bridge_data["modules_sync_timestamp"] = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
 
-    print("-" * 70)
-    print("[V3000-Ω] TỔNG KẾT THEO NHÓM:")
-    for group, protos in protocol_groups.items():
-        print(f"  {group}: {len(protos)} giao thức ✅")
-
-    return results, protocol_groups
-
-def inject_production_html(results, protocol_groups, target_kho=""):
-    index_path = os.path.join("..", "index.html")
-    if not os.path.exists(index_path):
-        index_path = "index.html"
-    if not os.path.exists(index_path):
-        print("[ERROR] Không tìm thấy index.html!")
-        return
-
-    with open(index_path, "r", encoding="utf-8") as f:
-        html = f.read()
-
-    # DỌN SẠCH TOÀN BỘ BANNER CŨ
-    html = re.sub(r'<div id="dnbc-adtech-banner".*?</div>', '', html, flags=re.DOTALL | re.IGNORECASE)
-    html = re.sub(r'<div id="eath esen-matrix-summary".*?</div>', '', html, flags=re.DOTALL | re.IGNORECASE)
-
-    # Golden 2px Drone Shield (nếu bạn muốn giữ)
-    golden_style = """
-    <style>
-    .drone-frame, #drone-main, .hero-drone, img[alt*="drone"] {
-        border: 2px solid #FFD700 !important;
-        box-shadow: 0 0 15px #FFD700, 0 0 25px #FFAA00 !important;
-        animation: golden-glow 2s infinite alternate;
-    }
-    @keyframes golden-glow { from { box-shadow: 0 0 10px #FFD700; } to { box-shadow: 0 0 20px #FFAA00; } }
-    </style>
-    """
-    if "<head>" in html:
-        html = html.replace("<head>", f"<head>\n{golden_style}")
-
-    with open(index_path, "w", encoding="utf-8") as f:
-        f.write(html)
-    print("[SUCCESS] Golden 2px Drone Shield injected (NO public banner)!")
+    # Lưu lại file system_bridge.json tạm thời để Workflow trung chuyển ra ngoài
+    os.makedirs(os.path.dirname(core_bridge_path), exist_ok=True)
+    with open(core_bridge_path, "w", encoding="utf-8") as f:
+        json.dump(base_bridge_data, f, indent=4, ensure_ascii=False)
+        
+    print(f"[SUCCESS] Đã đồng bộ tín hiệu vô hạn của {len(detected_modules)} Modules về Super Core Affiliate.")
 
 if __name__ == "__main__":
-    target_url = "https://donabico-global-media.github.io/8000kicks/"
-    target_kho = ""
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "u:k:", ["url=", "kho="])
-        for opt, arg in opts:
-            if opt in ("-u", "--url"): target_url = arg
-            elif opt in ("-k", "--kho"): target_kho = arg
-    except getopt.GetoptError:
-        pass
-
-    results, protocol_groups = run_massive_siphon_matrix(target_url, target_kho)
-    inject_production_html(results, protocol_groups, target_kho)
+    activate_all_modules()
+    
