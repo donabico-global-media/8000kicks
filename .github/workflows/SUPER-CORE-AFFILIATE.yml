@@ -2,7 +2,7 @@ name: SUPER-CORE-AFFILIATE
 
 on:
   schedule:
-    - cron: '*/5 * * * *'  # Vòng lặp đệ quy kích hoạt lõi tự động mỗi 5 phút liên tục 24/7
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -24,7 +24,6 @@ jobs:
           python-version: '3.x'
 
       - name: Execute Super Core Calibration
-        # Kích hoạt tệp lõi để chưng cất tri thức ALU và nạp cấu hình Headless ra gốc
         run: python "Super Core Affiliate/Super-Core-Affiliate.py"
 
       - name: Ghost Push Central Gateway
@@ -34,16 +33,14 @@ jobs:
           git config --global user.name "EATHESEN-CORE-BOT"
           git config --global user.email "core@donabicomedia.net"
           
-          # Giám sát và kiểm soát duy nhất file cấu hình tĩnh tại thư mục gốc
           git add system_bridge.json
           
           if ! git diff --cached --quiet; then
             git commit -m "¢24-Core-Evolution: Sync Central Matrix $(date -u +'%Y-%m-%d %H:%M:%S') UTC"
             
-            # CHIẾN LƯỢC VÁ LỖI XUNG ĐỘT NHÁNH: Đồng bộ nhanh trước khi đẩy mã nguồn lên
-            git pull origin main --rebase
+            # CHIẾN LƯỢC ÉP ĐÈ X-STRATEGY: Ưu tiên tuyệt đối file mới sinh ra khi xảy ra xung đột
+            git pull origin main --rebase -X ours
             
-            # Đẩy tín hiệu sạch lên kho lưu trữ đám mây
             git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git main
           else
             echo "[EATHESEN] Trạng thái ma trận cân bằng, bỏ qua chu kỳ Commit này."
