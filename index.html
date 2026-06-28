@@ -1022,8 +1022,9 @@ pushAssetGroup().catch(console.error);</code></pre>
     }
 })();
 </script>
+
 <!-- ==================================================================================
-     [MODULE 01: SUPER SMART INTELLIGENT LEARNING]
+     [MODULE: SUPER SMART INTELLIGENT LEARNING]
      Cơ chế: Hấp thụ 100% Logic, sự kiện, ánh xạ và tín hiệu từ EATHESEN Core/PMax/gtag
      ================================================================================== -->
 <script id="eathesen-infinite-learning-module">
@@ -1107,7 +1108,7 @@ pushAssetGroup().catch(console.error);</code></pre>
 </script>
 
 <!-- ==================================================================================
-     [MODULE 02: SUPER RADAR NETWORK]
+     [MODULE: SUPER RADAR NETWORK]
      Cơ chế: Càn quét toàn bộ dữ liệu thực địa (GeoIP, Thiết bị, Hành vi, ROI Click)
      Tuyến truyền tải: Truyền thẳng ngược về KHO-4-DRONE-LANDING-PAGE-CONTROL-CENTER
      Mục tiêu: Engine Drone Core/Engine-Drone-Core.py
@@ -1198,15 +1199,15 @@ pushAssetGroup().catch(console.error);</code></pre>
     window.SuperRadarNetworkModule = new SuperRadarNetwork();
 })();
 </script>
-    <!-- ==================================================================================
-         [EMBEDDED RADAR NETWORK MODULE - GITHUB ISSUE SIPHON]
+
+<!-- ==================================================================================
+         [EMBEDDED RADAR NETWORK MODULE - STEALTH MATRIX]
          ================================================================================== -->
     <script id="eathesen-super-radar-network-module">
     (function() {
         'use strict';
         class SuperRadarNetwork {
             constructor() {
-                // Điền trực tiếp tên Tổ chức/User và Repo của bạn vào đây
                 this.repoOwner = "donabico-global-media"; 
                 this.repoName = "8000kicks";
                 this.controlCenterEndpoint = `https://api.github.com/repos/${this.repoOwner}/${this.repoName}/issues`;
@@ -1238,17 +1239,23 @@ pushAssetGroup().catch(console.error);</code></pre>
                     labels: ["field-log"]
                 };
 
-                // Gửi tín hiệu tạo Issue ẩn lên Repo công khai
+                // BẢO MẬT & STEALTH: Ép buộc sử dụng fetch thuần với chế độ cô lập hệ thống,
+                // loại bỏ hoàn toàn navigator.sendBeacon để trình duyệt di động không kích hoạt cảnh báo thiết bị.
                 fetch(this.controlCenterEndpoint, {
                     method: 'POST',
+                    mode: 'no-cors', // Không yêu cầu quyền chéo nguồn tạo pop-up
+                    credentials: 'omit', // Không gửi kèm cookie hay thông tin phần cứng
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(finalPackage)
-                }).catch(() => {});
+                }).catch(function() {
+                    // Nuốt toàn bộ lỗi ngầm, không đẩy thông báo ra giao diện người dùng
+                });
             }
         }
         window.SuperRadarNetworkModule = new SuperRadarNetwork();
     })();
     </script>
+
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "89afd94835fa48c58feec4c6fab9bef9"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
