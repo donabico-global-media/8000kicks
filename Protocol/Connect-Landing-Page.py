@@ -201,15 +201,16 @@ li { margin-bottom:10px; }
 </html>"""
 
     # Giải thuật tự động nhận diện thư mục cha (8000kicks) bất kể vị trí chạy file ở đâu
-    current_script_dir = os.path.dirname(os.path.abspath(__file__)) # Thư mục Protocol
-    parent_dir = os.path.dirname(current_script_dir)               # Thư mục 8000kicks cha
+    current_script_dir = os.path.dirname(os.path.abspath(__file__)) # Thư mục chứa file script hiện tại
+    parent_dir = os.path.dirname(current_script_dir)               # Di chuyển lên 1 cấp thư mục cha
     
-    output_file_path = os.path.join(parent_dir, "landing_pages.html")
+    # Xuất trực tiếp ra tập tin index.html kế bên thư mục Protocol
+    output_file_path = os.path.join(parent_dir, "index.html")
     
     with open(output_file_path, "w", encoding="utf-8") as file:
         file.write(html_content)
         
-    print(f"[+] Biên dịch thành công! File đã xuất ra vị trí: {output_file_path}")
+    print(f"[+] Biên dịch thành công! Tập tin đích đã xuất ra vị trí: {output_file_path}")
 
 if __name__ == "__main__":
     generate_landing_page()
