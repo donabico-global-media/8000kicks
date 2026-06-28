@@ -1,49 +1,20 @@
-name: HYBRID-ULTIMA-ACTIVATION
-
+name: A2A-HYBRID-ULTIMA-ACTIVATION
 on:
   push:
     branches: [ main, master ]
-    paths:
-      - 'Protocol/**'
+    paths: ['Protocol/**']
   workflow_dispatch:
-
 jobs:
-  hybrid-max-activation:
+  a2a-real-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Python 3.12
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install Dependencies
-        run: pip install --upgrade pip
-
-      - name: Create Protocol Directory
-        run: mkdir -p Protocol
-
-      - name: Run MCP Core ULTIMA MAX
-        run: |
-          cd Protocol && python MCP_Core_V3000_ULTIMA.py || echo "MCP missing"
-
-      - name: Run A2A Hybrid ULTIMA MAX
-        run: |
-          cd Protocol && python A2A_Hybrid_V3000_ULTIMA.py || echo "A2A missing"
-
-      - name: Archive Logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: hybrid-logs
-          path: |
-            Protocol/*.log
-            Protocol/.mcp/**
-            Protocol/.a2a/**
-
-      - name: Final ¢24 Report
-        run: |
-          echo "EATHESEN V3000-Ω HYBRID ULTIMA MAX ACTIVATED"
-          echo "MCP + A2A Synced | 24 Attributes = 1"
-          ls -la Protocol/
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: pip install -r requirements.txt
+      - run: python Protocol/A2A_Hybrid_V3000_ULTIMA.py
+      - run: python -c "
+          from Protocol.A2A_Hybrid_V3000_ULTIMA import A2AHybridUltima
+          a2a = A2AHybridUltima()
+          print(a2a.process_signal('workflow_test', {'source': 'github-actions'}))
+        "
