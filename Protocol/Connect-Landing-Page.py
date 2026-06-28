@@ -1,32 +1,54 @@
-# Protocol/Connect-Landing-Page.py
-from fastapi import FastAPI
-from pydantic import BaseModel
-from MCP_Core_V3000_ULTIMA import MCPCoreUltima
-from A2A_Hybrid_V3000_ULTIMA import A2AHybridUltima
+# -*- coding: utf-8 -*-
+import json
+import os
+from datetime import datetime
 
-app = FastAPI(title="EATHESEN V3000-Ω Real Protocol Bridge - DroneSwarm")
+class IssueLogProcessor:
+    def __init__(self):
+        self.script_dir = os.path.dirname(os.path.abspath(__file__))
+        self.raw_log_path = os.path.join(self.script_dir, "raw_harvested.json")
+        self.final_matrix_path = os.path.join(self.script_dir, "siphon_conversion_matrix.log")
+        self.processed_numbers_path = os.path.join(self.script_dir, "processed_numbers.txt")
 
-class SignalPayload(BaseModel):
-    signal_type: str
-    data: dict
+    def process_signals(self):
+        if not os.path.exists(self.raw_log_path):
+            return
 
-mcp = MCPCoreUltima()
-a2a = A2AHybridUltima()
+        try:
+            with open(self.raw_log_path, "r", encoding="utf-8") as f:
+                issues_list = json.load(f)
+            
+            if not issues_list:
+                return
 
-@app.post("/a2a/transfer")
-async def a2a_transfer(payload: SignalPayload):
-    result = a2a.process_signal(payload.signal_type, payload.data)
-    return {"status": "success", "module": "A2A", "result": result}
+            processed_numbers = []
+            
+            with open(self.final_matrix_path, "a", encoding="utf-8") as matrix_f:
+                for issue in issues_list:
+                    body_str = issue.get("body", "")
+                    issue_number = issue.get("number")
+                    
+                    try:
+                        # Bóc tách nội dung JSON lưu trong thân của Issue
+                        radar_package = json.loads(body_str)
+                        radar_package["protocol_compiled_at"] = datetime.now().isoformat()
+                        
+                        matrix_f.write(json.dumps(radar_package) + "\n")
+                        processed_numbers.append(str(issue_number))
+                    except:
+                        # Nếu body không phải json chuẩn, vẫn lưu thô tránh mất vết
+                        continue
+            
+            # Ghi lại các số Issue đã xử lý để Workflow tiến hành đóng
+            if processed_numbers:
+                with open(self.processed_numbers_path, "w", encoding="utf-8") as num_f:
+                    num_f.write("\n".join(processed_numbers))
+            
+            os.remove(self.raw_log_path)
+            print(f"📊 Đã lọc thành công {len(processed_numbers)} tín hiệu.")
 
-@app.post("/mcp/process")
-async def mcp_process(payload: SignalPayload):
-    result = mcp.process_signal(payload.signal_type, payload.data)
-    return {"status": "success", "module": "MCP", "result": result}
-
-@app.get("/health")
-async def health():
-    return {"status": "healthy", "modules": ["MCP_Core", "A2A_Hybrid"], "system": "EATHESEN V3000-Ω"}
+        except Exception as e:
+            print(f"🚨 Lỗi biên dịch: {e}")
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    IssueLogProcessor().process_signals()
