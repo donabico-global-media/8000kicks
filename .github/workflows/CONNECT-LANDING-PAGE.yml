@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - '8000kicks/Protocol/Connect-Landing-Page.py'
+      - '**/Connect-Landing-Page.py'
   workflow_dispatch:
 
 permissions:
@@ -24,20 +24,38 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: 🛠️ Thực thi Script Biên dịch Landing Page EATHESEN
+    - name: 🛠️ Tự động dò tìm và Thực thi Script EATHESEN
       run: |
-        python 8000kicks/Protocol/Connect-Landing-Page.py
+        # Dò tìm vị trí chính xác của script trong workspace
+        SCRIPT_PATH=$(find . -name "Connect-Landing-Page.py" -print -quit)
+        
+        if [ -z "$SCRIPT_PATH" ]; then
+          echo "❌ LỖI: Không tìm thấy file Connect-Landing-Page.py trong repository!"
+          exit 1
+        fi
+        
+        echo "[+] Đã tìm thấy script tại: $SCRIPT_PATH"
+        echo "[+] Khởi chạy biên dịch hệ thống..."
+        python "$SCRIPT_PATH"
 
-    - name: 💾 Tự động đồng bộ và Đẩy thay đổi lên Hệ thống GitHub Pages
+    - name: 💾 Tự động đồng bộ và Đẩy thay đổi lên GitHub
       run: |
         git config --global user.name "donabico-global-media-admin"
         git config --global user.email "donabico.media.system@gmail.com"
         
-        # Kiểm tra xem có sự thay đổi nào trong cấu trúc không
-        git add 8000kicks/landing_pages.html
+        # Tìm file landing_pages.html vừa tạo ra để add vào git
+        OUTPUT_PATH=$(find . -name "landing_pages.html" -print -quit)
+        
+        if [ -z "$OUTPUT_PATH" ]; then
+          # Nếu chưa có sẵn cây thư mục, fallback về add toàn bộ thư mục 8000kicks
+          git add "**/landing_pages.html" 2>/dev/null || git add .
+        else
+          echo "[+] Ghi nhận file đầu ra tại: $OUTPUT_PATH"
+          git add "$OUTPUT_PATH"
+        fi
         
         if git diff --staged --quiet; then
-          echo "[-] Không tìm thấy sự thay đổi nào trong mã nguồn landing_pages.html."
+          echo "[-] Không có sự thay đổi nào trong mã nguồn landing_pages.html."
         else
           git commit -m "🚀 [Automated] Sync & Compile 8000Kicks Landing Page v3000-Ω"
           git push origin main
