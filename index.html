@@ -359,21 +359,44 @@ function exportAndPushToGoogleAds() {
 })();
 </script>
 <script src="Agent-Logic.js"></script>
-// Cập nhật trong script mcp-a2a-google-hybrid-protocol tại index (1)_5.html
-syncToGoogleAds: function(userState) {
-    const payload = {
-        timestamp: new Date().toISOString(),
-        action: "UPDATE_BIDDING_STRATEGY",
-        target_roas: 4.8 * (userState.intentScore || 1.0)
-    };
+<script id="mcp-a2a-google-hybrid-protocol">
+(function() {
+    'use strict';
     
-    // Gửi dữ liệu tự động tới Module Python
-    fetch('https://your-server-url.com/mcp-sync', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-    }).then(res => console.log("[A2A] Đã kết nối thành công với Module Python"));
-}
+    const MCP_A2A_Bridge = {
+        // Địa chỉ server nơi chạy file Modules/MCP-A2A-Bridge.py
+        endpoint: "http://localhost:5000/mcp-sync", 
+        
+        syncToGoogleAds: function(userState) {
+            const payload = {
+                timestamp: new Date().toISOString(),
+                action: "UPDATE_BIDDING_STRATEGY",
+                target_roas: 4.8 * (userState.intentScore || 1.0),
+                source: "EATHESEN_V3000-Ω"
+            };
+            
+            // Cập nhật: Tự động gửi payload tới Module Python
+            fetch(this.endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => console.log("[MCP-A2A] Đã đồng bộ thành công với Bridge:", data))
+            .catch(error => console.error("[MCP-A2A] Lỗi kết nối Bridge:", error));
+        },
+
+        activate: function() {
+            // Lắng nghe tín hiệu từ các module EATHESEN hiện có
+            window.addEventListener('user-behavior-detected', (e) => {
+                this.syncToGoogleAds(e.detail);
+            });
+        }
+    };
+
+    MCP_A2A_Bridge.activate();
+})();
+</script>
 <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "89afd94835fa48c58feec4c6fab9bef9"}'></script>
 </body>
 </html>
