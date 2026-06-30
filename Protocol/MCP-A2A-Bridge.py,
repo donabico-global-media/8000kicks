@@ -1,0 +1,26 @@
+# Modules/MCP-A2A-Bridge.py
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+class MCP_A2A_Bridge:
+    """
+    Module cầu nối tự động cho hệ thống MCP A2A Google Hybrid.
+    Lắng nghe tín hiệu từ index.html và đồng bộ hóa với Google Ads API.
+    """
+    @staticmethod
+    def sync_to_ads(data):
+        # Tự động hóa logic điều chỉnh giá thầu hoặc cập nhật trạng thái
+        print(f"[MCP-A2A-Bridge] Đã tiếp nhận tín hiệu từ Landing Page: {data.get('action')}")
+        # Tại đây sẽ tích hợp SDK Google Ads để thực thi lệnh trực tiếp
+        return {"status": "SYNCED", "engine": "EATHESEN_V3000-Ω"}
+
+@app.route('/mcp-sync', methods=['POST'])
+def sync_endpoint():
+    payload = request.json
+    result = MCP_A2A_Bridge.sync_to_ads(payload)
+    return jsonify(result)
+
+if __name__ == '__main__':
+    # Chạy trạm trung chuyển để index.html tự động kết nối vào
+    app.run(port=5000)
