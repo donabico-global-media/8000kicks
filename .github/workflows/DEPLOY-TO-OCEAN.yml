@@ -3,11 +3,7 @@ name: DEPLOY-TO-OCEAN
 on:
   push:
     branches: [ main ]
-
-# Đảm bảo không bị xung đột nếu có nhiều lệnh push liên tiếp
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_dispatch:  # Dòng này sẽ tạo ra nút "Run workflow" cho bạn
 
 jobs:
   deploy:
@@ -21,5 +17,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
-          # Tự động thêm thông báo commit để dễ quản lý trong tab Actions
-          commit_message: "DEPLOY-TO-OCEAN: AUTOMATED SYSTEM SYNC [V3000-Ω]"
+          commit_message: "DEPLOY-TO-OCEAN: MANUAL TRIGGER [V3000-Ω]"
