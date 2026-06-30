@@ -1,5 +1,6 @@
 import json
 import os
+import subprocess
 from datetime import datetime
 
 def activate_all_modules():
@@ -49,7 +50,19 @@ def activate_all_modules():
     with open(root_bridge_path, "w", encoding="utf-8") as f:
         json.dump(base_data, f, indent=4, ensure_ascii=False)
         
-    print(f"[SUCCESS] Ma trận đã hợp nhất {len(detected_modules)} Modules với dấu tích xanh xác minh thành công!")
+    print(f"[SUCCESS] Ma trận đã hợp nhất {len(detected_modules)} Modules thành công!")
+
+    # WORKFLOW MỚI: Kích hoạt Bộ não trung tâm (Super-Core-Affiliate.py)
+    core_path = os.path.join(root_dir, "Super Core Affiliate", "Super-Core-Affiliate.py")
+    if os.path.exists(core_path):
+        print("[+] KÍCH HOẠT ĐỒNG BỘ SUPER CORE...")
+        try:
+            subprocess.run(["python", core_path], check=True)
+            print(" |-- [SUCCESS] Super-Core-Affiliate.py đã nhận lệnh từ ma trận ✅")
+        except Exception as e:
+            print(f" |-- [ERROR] Lỗi kích hoạt Super Core: {e}")
+    else:
+        print(f" |-- [WARNING] Không tìm thấy Super-Core-Affiliate.py tại: {core_path}")
 
 if __name__ == "__main__":
     activate_all_modules()
