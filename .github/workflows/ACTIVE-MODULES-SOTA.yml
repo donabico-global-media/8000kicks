@@ -5,7 +5,7 @@ on:
     branches: [ main ]
   schedule:
     - cron: '0 * * * *'
-  workflow_dispatch:  # Nút kích hoạt thủ công trên giao diện GitHub Actions
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -23,27 +23,33 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: START NGROK TUNNEL
+        run: |
+          curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+          echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+          sudo apt update && sudo apt install ngrok
+          ngrok config add-authtoken ${{ secrets.AUTHTOKEN_NGROK }}
+          ngrok http 80 > /dev/null &
+        env:
+          NGROK_AUTHTOKEN: ${{ secrets.AUTHTOKEN_NGROK }}
+
       - name: EXECUTE NEURAL SIPHON PROTOCOL
         run: python Modules/Active-Modules.py
+        env:
+          REST_API_NGROK: ${{ secrets.REST_API_NGROK }}
 
       - name: COMMIT AND SYNC RECURSIVE STATE
         run: |
           git config --global user.name 'donabico-global-media'
           git config --global user.email 'donabico.media.system@gmail.com'
           
-          # 1. Cập nhật các thay đổi từ xa mà không merge
           git fetch origin main
-          
-          # 2. Reset local về trạng thái mới nhất của remote
           git reset --hard origin/main
           
-          # 3. Chạy lại script để đảm bảo trạng thái sạch nhất (Đồng bộ Core và Modules)
           python Modules/Active-Modules.py
           
-          # 4. Thêm các file đã cập nhật (system_bridge.json được Active-Modules tạo mới)
           git add system_bridge.json
           
-          # 5. Commit và Push
           if git diff --cached --quiet; then
             echo "[-] KHÔNG CÓ THAY ĐỔI CẦN ĐỒNG BỘ."
           else
