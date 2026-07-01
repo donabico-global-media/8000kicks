@@ -1,48 +1,19 @@
-name: ACTIVE-MODULES-SOTA
-
-on:
-  push:
-    branches: [ main ]
-  schedule:
-    - cron: '0 * * * *' # Chạy mỗi giờ[span_2](start_span)[span_2](end_span)
-  workflow_dispatch:
-
-permissions:
-  contents: write
-
-jobs:
-  sota-orchestration:
-    runs-on: ubuntu-latest
-    steps:
-      - name: CHECKOUT REPOSITORY
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # Lấy toàn bộ lịch sử để rebase an toàn
-
-      - name: SET UP PYTHON
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: EXECUTE NEURAL SIPHON PROTOCOL
-        run: python Modules/Active-Modules.py
-
       - name: SYNC & COMMIT WITH CONFLICT RESOLUTION
         run: |
           git config --global user.name 'donabico-global-media'
           git config --global user.email 'donabico.media.system@gmail.com'
           
-          # Cấu hình rebase tự động để tránh xung đột[span_3](start_span)[span_3](end_span)
-          git pull --rebase origin main
-          
+          # 1. Đưa thay đổi vào Staging Area trước khi Pull
           git add Modules-Bridge.json
           
-          # Chỉ commit và push nếu có sự thay đổi thực tế[span_4](start_span)[span_4](end_span)
+          # 2. Cập nhật từ remote bằng rebase
+          # Nếu có thay đổi ở remote, git sẽ tạm cất commit local, update, rồi áp dụng lại
+          git pull --rebase origin main
+          
+          # 3. Chỉ commit nếu file thực sự có thay đổi so với HEAD
           if ! git diff --cached --quiet; then
             git commit -m "[SYSTEM UPDATE] MA TRẬN MODULES - AUTO SYNC - DONABICO"
             git push origin main
           else
             echo "[-] KHÔNG CÓ THAY ĐỔI MỚI. HỆ THỐNG VẪN PULSING_GREEN."
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
