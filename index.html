@@ -1022,14 +1022,51 @@ pushAssetGroup().catch(console.error);</code></pre>
     }
 })();
 </script>
-<script>
-    // Script ăng-ten: Lắng nghe trạng thái từ Bảng lệnh
-    fetch('system_bridge.json')
-        .then(response => response.json())
-        .then(data => {
+<!-- DONABICO GLOBAL MEDIA - SOTA BRIDGE LISTENER -->
+<script id="dnbc-bridge-listener">
+    async function initSystemBridge() {
+        try {
+            // Kết nối trực tiếp tới ma trận Modules-Bridge.json tự sinh[span_3](start_span)[span_3](end_span)
+            const response = await fetch('Modules-Bridge.json?t=' + new Date().getTime());
+            if (!response.ok) throw new Error('Bridge unreachable');
+            
+            const data = await response.json();
+            
             console.log("[SYSTEM] Kết nối thành công tới SOTA Core ✅");
-            // Tại đây bạn có thể inject logic điều khiển border, font, hoặc link
-        });
+            console.log("[MATRIX] Đang vận hành với:", Object.keys(data.active_modules_matrix).length, "modules.");
+            
+            // Tự động kích hoạt trạng thái PULSING_GREEN cho giao diện[span_4](start_span)[span_4](end_span)[span_5](start_span)[span_5](end_span)
+            if (data.sync_status === "PULSING_GREEN") {
+                document.body.style.border = "4px solid #00FF66";
+                document.body.setAttribute('data-system-state', 'ACTIVE_SOTA');
+            }
+        } catch (e) {
+            console.warn("[SYSTEM] Chờ đợi Workflow đồng bộ ma trận...");
+        }
+    }
+
+    // Khởi tạo kết nối khi trang tải xong
+    window.addEventListener('DOMContentLoaded', initSystemBridge);
+    
+    // Tự động kiểm tra cập nhật ma trận mỗi 60 giây để đảm bảo tính thời gian thực
+    setInterval(initSystemBridge, 60000);
+</script>
+<script id="dnbc-protocol-listener">
+    async function initProtocolBridge() {
+        try {
+            const response = await fetch('Protocols-Bridge.json?t=' + new Date().getTime());
+            const data = await response.json();
+            
+            console.log("[SYSTEM] Protocol Bridge kết nối thành công ✅");
+            if (data.sync_status === "PULSING_GREEN") {
+                // Tùy chọn: Thêm hiệu ứng border riêng cho Protocols nếu muốn
+                console.log("[PROTOCOL] Matrix active:", Object.keys(data.active_protocols_matrix).length);
+            }
+        } catch (e) {
+            console.warn("[SYSTEM] Protocols-Bridge chưa sẵn sàng...");
+        }
+    }
+    window.addEventListener('DOMContentLoaded', initProtocolBridge);
 </script>
 <script id="DNBC-MODULE-EXTENSION">
 (function() {
