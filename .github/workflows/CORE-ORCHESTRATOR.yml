@@ -2,26 +2,43 @@ name: CORE-ORCHESTRATOR
 
 on:
   schedule:
-    - cron: '5 * * * *' # Chạy sau các Workflow con 5 phút
+    - cron: '30 * * * *' # Chạy mỗi giờ (lệch 30 phút so với các Workflow con)
   workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write # Cần quyền này để kích hoạt Workflow khác
 
 jobs:
   orchestrate:
     runs-on: ubuntu-latest
     steps:
-      - name: TRIGGER NEURAL SIPHON
+      - name: CHECKOUT REPOSITORY
+        uses: actions/checkout@v3
+
+      - name: TRIGGER SUB-WORKFLOWS
         run: |
-          # Kích hoạt Modules Workflow
+          # Kích hoạt ACTIVE-MODULES-SOTA
           curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/${{ github.repository }}/actions/workflows/ACTIVE-MODULES-SOTA.yml/dispatches \
           -d '{"ref":"main"}'
           
-          # Kích hoạt Protocols Workflow
+          # Kích hoạt ACTIVE-PROTOCOLS-SOTA
           curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
           https://api.github.com/repos/${{ github.repository }}/actions/workflows/ACTIVE-PROTOCOLS-SOTA.yml/dispatches \
           -d '{"ref":"main"}'
-          
+
       - name: EXECUTE SUPER CORE LOGIC
-        run: python "Super Core Affiliate/Super-Core-Affiliate.py"
+        run: |
+          # Sử dụng dấu ngoặc kép để xử lý khoảng trắng trong tên thư mục
+          if [ -d "Super Core Affiliate" ]; then
+            python "Super Core Affiliate/Super-Core-Affiliate.py"
+          else
+            echo "[ERROR] Thư mục 'Super Core Affiliate' không tồn tại."
+            ls -F
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
