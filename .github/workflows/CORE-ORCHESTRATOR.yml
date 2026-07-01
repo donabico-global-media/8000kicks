@@ -1,0 +1,27 @@
+name: CORE-ORCHESTRATOR
+
+on:
+  schedule:
+    - cron: '5 * * * *' # Chạy sau các Workflow con 5 phút
+  workflow_dispatch:
+
+jobs:
+  orchestrate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: TRIGGER NEURAL SIPHON
+        run: |
+          # Kích hoạt Modules Workflow
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/${{ github.repository }}/actions/workflows/ACTIVE-MODULES-SOTA.yml/dispatches \
+          -d '{"ref":"main"}'
+          
+          # Kích hoạt Protocols Workflow
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/${{ github.repository }}/actions/workflows/ACTIVE-PROTOCOLS-SOTA.yml/dispatches \
+          -d '{"ref":"main"}'
+          
+      - name: EXECUTE SUPER CORE LOGIC
+        run: python "Super Core Affiliate/Super-Core-Affiliate.py"
